@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import './theme.dart';
 
@@ -15,15 +14,35 @@ class TicTacToe extends StatefulWidget {
 class _TicTacToeState extends State<TicTacToe> {
   List<String> moves = List(9);
 
-  bool playerPlayed = false;
-  int movesPlayed = 0;
-
-  int playerLastMoveIndex;
-
   @override
   void initState() {
     moves.fillRange(0, 9, '');
     super.initState();
+  }
+
+  void showWinner(BuildContext context, String winner) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('$winner'),
+            actions: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  
+                },
+                child: Text('Play again?'),
+              )
+            ],
+          );
+        }).then((f){
+          clearList();
+        });
+
+    // print(winner);
+    // clearList();
   }
 
   @override
@@ -40,7 +59,7 @@ class _TicTacToeState extends State<TicTacToe> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
-                onMove(index);
+                playerMove(index);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -57,64 +76,235 @@ class _TicTacToeState extends State<TicTacToe> {
     );
   }
 
-  void onMove(int index) {
-    // for now consider player is going to play first.
-
+  void clearList() {
     setState(() {
-      moves[index] = '0';
-      movesPlayed++;
-
-      playerLastMoveIndex = index;
-
-      playerPlayed = true;
-
-      if (checkWon()) {
-        for (int i = 0; i < moves.length; i++) {
-          moves[i] = '';
-        }
-
-        print('You won!');
-      } else {
-        if (playerPlayed) {
-          autoAiPlay();
-        }
+      for (int i = 0; i < 9; i++) {
+        moves[i] = '';
       }
     });
   }
 
-  void autoAiPlay() {
-    setState(() {
+  checkAndDeclareIfDraw() {
+    if (checkPlayerHasWon() == false &&
+        checkAIHasWon() == false &&
+        !moves.contains('')) {
       
-      aiPlay(nextAvailableSpot(playerLastMoveIndex));
 
-      playerPlayed = false;
-    });
+      showWinner(context, 'It was a DRAW!!!');
+
+      clearList();
+    }
   }
 
-  int nextAvailableSpot(int lastMoveIndex) {
-    int availableSpot;
+  void playerMove(int index) {
+    setState(() {
+      if (moves[index] == '') {
+        moves[index] = 'X';
 
-    for (int i = 0; i < moves.length; i++) {
-      if (i != lastMoveIndex) {
-        if(moves[i] == '') {
-          availableSpot = i;
-          break;
+        if (moves.contains('')) {
+          autoAIPlay();
         }
+      }
+    });
+
+    if (checkPlayerHasWon()) {
+      showWinner(context, 'You have Won!!!');
+    } else if (checkAIHasWon()) {
+      declareAIAsWinner();
+    } else {
+      checkAndDeclareIfDraw();
+    }
+  }
+
+  void declareAIAsWinner() {
+    showWinner(context, 'AI has won!!!');
+  }
+
+  void autoAIPlay() {
+    if (canPlayerWin()) {
+      if (canAIWin()) {
+        if (moves[aiMayWinAt()] == '') {
+          moves[aiMayWinAt()] = '0';
+        } else {
+          if (moves[playerMayWinAt()] == '') {
+            moves[playerMayWinAt()] = '0';
+          } else {
+            insertAtRandom();
+          }
+        }
+      } else {
+        if (moves[playerMayWinAt()] == '') {
+          moves[playerMayWinAt()] = '0';
+        } else {
+          insertAtRandom();
+        }
+      }
+    } else {
+      insertAtRandom();
+    }
+  }
+
+  void insertAtRandom() {
+    bool moved = false;
+
+    while (moved != true) {
+      Random random = Random();
+      int nextMove = random.nextInt(9);
+
+      if (moves[nextMove] == '') {
+        moves[nextMove] = '0';
+        moved = true;
+        break;
       }
     }
-    return availableSpot;
   }
 
-  void aiPlay(int index) {
-    moves[index] = 'x';
+  bool canAIWin() {
+    return aiMayWinAt() >= 0;
   }
 
-  bool checkWon() {
+  bool canPlayerWin() {
+    return playerMayWinAt() >= 0;
+  }
+
+  int playerMayWinAt() {
+    if (moves[1] == 'X' && moves[2] == 'X') {
+      return 0;
+    } else if (moves[0] == 'X' && moves[2] == 'X') {
+      return 1;
+    } else if (moves[0] == 'X' && moves[1] == 'X') {
+      return 2;
+    } else if (moves[4] == 'X' && moves[5] == 'X') {
+      return 3;
+    } else if (moves[3] == 'X' && moves[5] == 'X') {
+      return 4;
+    } else if (moves[3] == 'X' && moves[4] == 'X') {
+      return 5;
+    } else if (moves[7] == 'X' && moves[8] == 'X') {
+      return 6;
+    } else if (moves[6] == 'X' && moves[8] == 'X') {
+      return 7;
+    } else if (moves[6] == 'X' && moves[7] == 'X') {
+      return 8;
+    } else if (moves[3] == 'X' && moves[6] == 'X') {
+      return 0;
+    } else if (moves[0] == 'X' && moves[6] == 'X') {
+      return 3;
+    } else if (moves[0] == 'X' && moves[3] == 'X') {
+      return 6;
+    } else if (moves[4] == 'X' && moves[7] == 'X') {
+      return 1;
+    } else if (moves[1] == 'X' && moves[7] == 'X') {
+      return 4;
+    } else if (moves[1] == 'X' && moves[4] == 'X') {
+      return 7;
+    } else if (moves[5] == 'X' && moves[8] == 'X') {
+      return 2;
+    } else if (moves[2] == 'X' && moves[8] == 'X') {
+      return 5;
+    } else if (moves[2] == 'X' && moves[5] == 'X') {
+      return 8;
+    } else if (moves[4] == 'X' && moves[8] == 'X') {
+      return 0;
+    } else if (moves[0] == 'X' && moves[8] == 'X') {
+      return 4;
+    } else if (moves[4] == 'X' && moves[8] == 'X') {
+      return 0;
+    } else if (moves[0] == 'X' && moves[4] == 'X') {
+      return 8;
+    } else {
+      return 4;
+    }
+  }
+
+  int aiMayWinAt() {
+    if (moves[1] == '0' && moves[2] == '0') {
+      return 0;
+    } else if (moves[0] == '0' && moves[2] == '0') {
+      return 1;
+    } else if (moves[0] == '0' && moves[1] == '0') {
+      return 2;
+    } else if (moves[4] == '0' && moves[5] == '0') {
+      return 3;
+    } else if (moves[3] == '0' && moves[5] == '0') {
+      return 4;
+    } else if (moves[3] == '0' && moves[4] == '0') {
+      return 5;
+    } else if (moves[7] == '0' && moves[8] == '0') {
+      return 6;
+    } else if (moves[6] == '0' && moves[8] == '0') {
+      return 7;
+    } else if (moves[6] == '0' && moves[7] == '0') {
+      return 8;
+    } else if (moves[3] == '0' && moves[6] == '0') {
+      return 0;
+    } else if (moves[0] == '0' && moves[6] == '0') {
+      return 3;
+    } else if (moves[0] == '0' && moves[3] == '0') {
+      return 6;
+    } else if (moves[4] == '0' && moves[7] == '0') {
+      return 1;
+    } else if (moves[1] == '0' && moves[7] == '0') {
+      return 4;
+    } else if (moves[1] == '0' && moves[4] == '0') {
+      return 7;
+    } else if (moves[5] == '0' && moves[8] == '0') {
+      return 2;
+    } else if (moves[2] == '0' && moves[8] == '0') {
+      return 5;
+    } else if (moves[2] == '0' && moves[5] == '0') {
+      return 8;
+    } else if (moves[4] == '0' && moves[8] == '0') {
+      return 0;
+    } else if (moves[0] == '0' && moves[8] == '0') {
+      return 4;
+    } else if (moves[4] == '0' && moves[8] == '0') {
+      return 0;
+    } else if (moves[0] == '0' && moves[4] == '0') {
+      return 8;
+    } else {
+      return 4;
+    }
+  }
+
+  bool checkPlayerHasWon() {
+    if (moves[0] == 'X' && moves[1] == 'X' && moves[2] == 'X') {
+      return true;
+    } else if (moves[3] == 'X' && moves[4] == 'X' && moves[5] == 'X') {
+      return true;
+    } else if (moves[6] == 'X' && moves[7] == 'X' && moves[8] == 'X') {
+      return true;
+    } else if (moves[0] == 'X' && moves[3] == 'X' && moves[6] == 'X') {
+      return true;
+    } else if (moves[1] == 'X' && moves[4] == 'X' && moves[7] == 'X') {
+      return true;
+    } else if (moves[2] == 'X' && moves[5] == 'X' && moves[8] == 'X') {
+      return true;
+    } else if (moves[0] == 'X' && moves[4] == 'X' && moves[8] == 'X') {
+      return true;
+    } else if (moves[2] == 'X' && moves[4] == 'X' && moves[6] == 'X') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool checkAIHasWon() {
     if (moves[0] == '0' && moves[1] == '0' && moves[2] == '0') {
       return true;
     } else if (moves[3] == '0' && moves[4] == '0' && moves[5] == '0') {
       return true;
     } else if (moves[6] == '0' && moves[7] == '0' && moves[8] == '0') {
+      return true;
+    } else if (moves[0] == '0' && moves[3] == '0' && moves[6] == '0') {
+      return true;
+    } else if (moves[1] == '0' && moves[4] == '0' && moves[7] == '0') {
+      return true;
+    } else if (moves[2] == '0' && moves[5] == '0' && moves[8] == '0') {
+      return true;
+    } else if (moves[0] == '0' && moves[4] == '0' && moves[8] == '0') {
+      return true;
+    } else if (moves[2] == '0' && moves[4] == '0' && moves[6] == '0') {
       return true;
     } else {
       return false;
