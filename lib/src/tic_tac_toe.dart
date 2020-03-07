@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 import './theme.dart';
@@ -13,9 +14,11 @@ class TicTacToe extends StatefulWidget {
 
 class _TicTacToeState extends State<TicTacToe> {
   List<String> moves = List(9);
+  final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
 
   @override
   void initState() {
+   
     moves.fillRange(0, 9, '');
     super.initState();
   }
@@ -31,7 +34,7 @@ class _TicTacToeState extends State<TicTacToe> {
               RaisedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  
+                  audioPlayer.stop();
                 },
                 child: Text('Play again?'),
               )
@@ -59,6 +62,8 @@ class _TicTacToeState extends State<TicTacToe> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
+                 audioPlayer.open('assets/audio/move2.mp3');
+                audioPlayer.play();
                 playerMove(index);
               },
               child: Container(
@@ -89,6 +94,8 @@ class _TicTacToeState extends State<TicTacToe> {
         checkAIHasWon() == false &&
         !moves.contains('')) {
       
+      audioPlayer.open('assets/audio/draw.mp3');
+      audioPlayer.play();
 
       showWinner(context, 'It was a DRAW!!!');
 
@@ -109,8 +116,12 @@ class _TicTacToeState extends State<TicTacToe> {
 
     if (checkPlayerHasWon()) {
       showWinner(context, 'You have Won!!!');
+      audioPlayer.open('assets/audio/won.mp3');
+      audioPlayer.play();
     } else if (checkAIHasWon()) {
       declareAIAsWinner();
+      audioPlayer.open('assets/audio/lost.mp3');
+      audioPlayer.play();
     } else {
       checkAndDeclareIfDraw();
     }
