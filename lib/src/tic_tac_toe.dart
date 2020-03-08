@@ -4,6 +4,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 import './theme.dart';
+import 'gameover.dart';
 
 class TicTacToe extends StatefulWidget {
   TicTacToe({Key key}) : super(key: key);
@@ -18,34 +19,8 @@ class _TicTacToeState extends State<TicTacToe> {
 
   @override
   void initState() {
-   
     moves.fillRange(0, 9, '');
     super.initState();
-  }
-
-  void showWinner(BuildContext context, String winner) {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('$winner'),
-            actions: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  audioPlayer.stop();
-                },
-                child: Text('Play again?'),
-              )
-            ],
-          );
-        }).then((f){
-          clearList();
-        });
-
-    // print(winner);
-    // clearList();
   }
 
   @override
@@ -62,7 +37,7 @@ class _TicTacToeState extends State<TicTacToe> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
-                 audioPlayer.open('assets/audio/move2.mp3');
+                audioPlayer.open('assets/audio/move2.mp3');
                 audioPlayer.play();
                 playerMove(index);
               },
@@ -81,7 +56,7 @@ class _TicTacToeState extends State<TicTacToe> {
     );
   }
 
-  void clearList() {
+  void reset() {
     setState(() {
       for (int i = 0; i < 9; i++) {
         moves[i] = '';
@@ -93,14 +68,27 @@ class _TicTacToeState extends State<TicTacToe> {
     if (checkPlayerHasWon() == false &&
         checkAIHasWon() == false &&
         !moves.contains('')) {
-      
       audioPlayer.open('assets/audio/draw.mp3');
       audioPlayer.play();
 
-      showWinner(context, 'It was a DRAW!!!');
+      showGameOverDialog('It was a DRAW!!!');
 
-      clearList();
+      reset();
     }
+  }
+
+  void showGameOverDialog(String winner) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return GameOver(winner, () {
+            Navigator.pop(context);
+            audioPlayer.stop();
+          });
+        }).then((f) {
+      reset();
+    });
   }
 
   void playerMove(int index) {
@@ -115,7 +103,7 @@ class _TicTacToeState extends State<TicTacToe> {
     });
 
     if (checkPlayerHasWon()) {
-      showWinner(context, 'You have Won!!!');
+      showGameOverDialog('You have Won!!!');
       audioPlayer.open('assets/audio/won.mp3');
       audioPlayer.play();
     } else if (checkAIHasWon()) {
@@ -128,7 +116,7 @@ class _TicTacToeState extends State<TicTacToe> {
   }
 
   void declareAIAsWinner() {
-    showWinner(context, 'AI has won!!!');
+    showGameOverDialog('AI has won!!!');
   }
 
   void autoAIPlay() {
@@ -321,4 +309,33 @@ class _TicTacToeState extends State<TicTacToe> {
       return false;
     }
   }
+
+  void playSound(SoundEffect soundEffect) {
+    switch (soundEffect) {
+      case SoundEffect.win:
+        audioPlayer.open('assets/audio/win.mp3');
+        audioPlayer.play();
+        break;
+
+      case SoundEffect.lost:
+        audioPlayer.open('assets/audio/lost.mp3');
+        audioPlayer.play();
+        break;
+
+      case SoundEffect.draw:
+        audioPlayer.open('assets/audio/draw.mp3');
+        audioPlayer.play();
+        break;
+
+      case SoundEffect.move:
+        audioPlayer.open('assets/audio/move.mp3');
+        audioPlayer.play();
+        break;
+
+      default:
+        break;
+    }
+  }
 }
+
+enum SoundEffect { win, lost, draw, move }
