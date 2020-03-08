@@ -37,8 +37,7 @@ class _TicTacToeState extends State<TicTacToe> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {
-                audioPlayer.open('assets/audio/move2.mp3');
-                audioPlayer.play();
+                playSound(SoundEffect.move);
                 playerMove(index);
               },
               child: Container(
