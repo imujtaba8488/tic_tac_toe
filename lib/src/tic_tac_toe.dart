@@ -7,6 +7,7 @@ import './theme.dart';
 import 'gameover.dart';
 
 enum Turn { player, ai }
+enum Winner { player, ai, draw, none }
 
 class TicTacToe extends StatefulWidget {
   TicTacToe({Key key}) : super(key: key);
@@ -21,93 +22,134 @@ class _TicTacToeState extends State<TicTacToe> {
   final List<int> playerMoveIndices = List();
   final List<int> aiMovesIndices = List();
   Turn turn;
+  Winner winner;
   String playerMark = 'X', aiMark = '0';
+  int playerScore = 0;
+  int aiScore = 0;
 
   @override
   void initState() {
     totalMoves.fillRange(0, 9, '');
     turn = Turn.player;
+    winner = Winner.none;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     // If it's ai's turn, play ai's turn.
-    checkForWinner();
-    if (turn == Turn.ai) {
-      Future.delayed(const Duration(seconds: 1), () {
-        aiPlay();
-      });
+    if (!hasWon()) {
+      if (turn == Turn.ai) {
+        Future.delayed(const Duration(seconds: 1), () {
+          aiPlay();
+        });
+      }
     }
 
     return Scaffold(
       backgroundColor: MyTheme().theme.primaryColor,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          itemCount: 9,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              onTap: () {
-                // if the position where the player wants to play is available.
-                if (isMoveAvailable(index)) {
-                  playMove(index);
-                } else {
-                  playSound(SoundEffect.error);
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(),
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height / 1.5,
+              child: GridView.builder(
+                itemCount: 9,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
                 ),
-                child: Center(
-                  child: Text(totalMoves[index]),
-                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      // if the position where the player wants to play is available.
+                      if (anyMoveLeft()) {
+                        if (isMoveAvailable(index)) {
+                          playMove(index);
+                        } else {
+                          playSound(SoundEffect.error);
+                        }
+                      } else {
+                        setState(() {
+                          winner = Winner.draw;
+                        });
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                      ),
+                      child: Center(
+                        child: Text(totalMoves[index]),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+            Text('Player Score: $playerScore'),
+            Text('AI Score: $aiScore'),
+            Divider(
+              color: Colors.amber,
+            ),
+            hasWon()
+                ? gameOver(
+                    winner == Winner.player ? 'You Have Won' : 'AI has Won')
+                : winner == Winner.draw ? gameOver('Its a Draw') : Container(),
+          ],
         ),
       ),
     );
   }
 
-  // One of the most important function.
+  // Quite an important function ... document later on.
   void playMove(int index) {
     setState(() {
       if (turn == Turn.player) {
-        totalMoves[index] = 'X';
+        totalMoves[index] = playerMark;
         playerMoveIndices.add(index);
-        turn = Turn.ai;
         playSound(SoundEffect.move);
+        turn = Turn.ai;
+        if (hasWon()) {
+          winner = Winner.player;
+          playerScore++;
+        }
       } else {
-        totalMoves[index] = '0';
+        totalMoves[index] = aiMark;
         aiMovesIndices.add(index);
-        turn = Turn.player;
         playSound(SoundEffect.aiMove);
+        turn = Turn.player;
+        if (hasWon()) {
+          winner = Winner.ai;
+          aiScore++;
+        }
       }
     });
   }
 
   void aiPlay() {
-    if (aiCanWin) {
-      print('Going down AI CAN WIN at: $aiCanWinAt....');
-      if (isMoveAvailable(aiCanWinAt)) {
-        playMove(aiCanWinAt);
-      } else {
-        playRandomly();
-      }
-    } else if (playerCanWin) {
-      print('Going down PLAYER CAN WIN at: $playerCanWinAt....');
-      if (isMoveAvailable(playerCanWinAt)) {
-        playMove(playerCanWinAt);
+    if (anyMoveLeft()) {
+      if (aiCanWin) {
+        print('Going down AI CAN WIN at: $aiCanWinAt....');
+        if (isMoveAvailable(aiCanWinAt)) {
+          playMove(aiCanWinAt);
+        } else {
+          playRandomly();
+        }
+      } else if (playerCanWin) {
+        print('Going down PLAYER CAN WIN at: $playerCanWinAt....');
+        if (isMoveAvailable(playerCanWinAt)) {
+          playMove(playerCanWinAt);
+        } else {
+          playRandomly();
+        }
       } else {
         playRandomly();
       }
     } else {
-      playRandomly();
+      setState(() {
+        winner = Winner.draw;
+      });
     }
   }
 
@@ -119,18 +161,22 @@ class _TicTacToeState extends State<TicTacToe> {
     return canWin(aiMovesIndices) >= 0;
   }
 
+  /// Return true, if there is a possibility that the player can win.
   bool get playerCanWin {
     return canWin(playerMoveIndices) >= 0;
   }
 
+  /// Returns true, if there is a possiblity that the ai can win.
   int get aiCanWinAt {
     return canWin(aiMovesIndices);
   }
 
+  /// Returns the index where the player can win at.
   int get playerCanWinAt {
     return canWin(playerMoveIndices);
   }
 
+  // Returns the index of a winning possibility for a given list containing the indicies occupied so far, else returns -1 if there is no possibility of winning.
   int canWin(List<int> indicies) {
     // For horizontal
     if (indicies.contains(1) && indicies.contains(2) && totalMoves[0].isEmpty) {
@@ -241,110 +287,100 @@ class _TicTacToeState extends State<TicTacToe> {
     }
   }
 
-  void checkForWinner() {
+  bool hasWon() {
     // For horizontal...
     if (totalMoves[0] == playerMark &&
         totalMoves[1] == playerMark &&
         totalMoves[2] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[0] == aiMark &&
         totalMoves[1] == aiMark &&
         totalMoves[2] == aiMark) {
-      declareAiAsWinner();
+      return true;
     } else if (totalMoves[3] == playerMark &&
         totalMoves[4] == playerMark &&
         totalMoves[5] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[3] == aiMark &&
         totalMoves[4] == aiMark &&
         totalMoves[5] == aiMark) {
-      declareAiAsWinner();
+      return true;
     } else if (totalMoves[6] == playerMark &&
         totalMoves[7] == playerMark &&
         totalMoves[8] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[6] == aiMark &&
         totalMoves[7] == aiMark &&
         totalMoves[8] == aiMark) {
-      declareAiAsWinner();
+      return true;
     }
 
     // for vertical....
     else if (totalMoves[0] == playerMark &&
         totalMoves[3] == playerMark &&
         totalMoves[6] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[0] == aiMark &&
         totalMoves[3] == aiMark &&
         totalMoves[6] == aiMark) {
-      declareAiAsWinner();
+      return true;
     } else if (totalMoves[1] == playerMark &&
         totalMoves[4] == playerMark &&
         totalMoves[7] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[1] == aiMark &&
         totalMoves[4] == aiMark &&
         totalMoves[7] == aiMark) {
-      declareAiAsWinner();
+      return true;
     } else if (totalMoves[2] == playerMark &&
         totalMoves[5] == playerMark &&
         totalMoves[8] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[2] == aiMark &&
         totalMoves[5] == aiMark &&
         totalMoves[8] == aiMark) {
-      declareAiAsWinner();
+      return true;
     }
 
     // For diagonal...
     else if (totalMoves[0] == playerMark &&
         totalMoves[4] == playerMark &&
         totalMoves[8] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[0] == aiMark &&
         totalMoves[4] == aiMark &&
         totalMoves[8] == aiMark) {
-      declareAiAsWinner();
+      return true;
     } else if (totalMoves[2] == playerMark &&
         totalMoves[4] == playerMark &&
         totalMoves[6] == playerMark) {
-      declarePlayerAsWinner();
+      return true;
     } else if (totalMoves[2] == aiMark &&
         totalMoves[4] == aiMark &&
         totalMoves[6] == aiMark) {
-      declareAiAsWinner();
+      return true;
+    } else {
+      return false;
     }
-  }
-
-  void declarePlayerAsWinner() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      child: GameOver('You are the Winner', () => Navigator.pop(context)),
-    ).then((f) => reset());
-  }
-
-  void declareAiAsWinner() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      child: GameOver('AI is the Winner', () => Navigator.pop(context)),
-    ).then((f) => reset());
   }
 
   void playRandomly() {
-    if (anyPositionAvailable()) {
+    if (anyMoveLeft()) {
       playMoveAtRandom();
     } else {
-      gameOver();
+      showDialog(
+        context: context,
+        child: GameOver('Its a Draw!', () => Navigator.pop(context)),
+      ).then((f) => reset());
     }
   }
 
-  bool anyPositionAvailable() {
+  bool anyMoveLeft() {
     return totalMoves.contains('');
   }
 
-  List<int> positionsAvailable() {
+  /// Returns the number of moves that the left to play.
+  List<int> movesLeft() {
     List<int> availablePos = List();
 
     for (int i = 0; i < totalMoves.length; i++) {
@@ -356,19 +392,34 @@ class _TicTacToeState extends State<TicTacToe> {
     return availablePos;
   }
 
+  /// Plays a move at random only when a move is available.
   void playMoveAtRandom() {
-    if (positionsAvailable().length > 0) {
-      positionsAvailable().shuffle();
+    if (movesLeft().length > 0) {
+      movesLeft().shuffle();
 
       Random random = Random();
-      int nextMove = random.nextInt(positionsAvailable().length);
+      int nextMove = random.nextInt(movesLeft().length);
 
-      playMove(positionsAvailable()[nextMove]);
+      playMove(movesLeft()[nextMove]);
     }
   }
 
-  void gameOver() {
-    //todo;
+  /// Run when the game is over.
+  Widget gameOver(String message) {
+    return ListTile(
+      title: Text(
+        'Results...',
+        style: TextStyle(color: Colors.blue),
+      ),
+      subtitle: Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      ),
+      trailing: RaisedButton(
+        onPressed: () => reset(),
+        child: Text('Play Again!'),
+      ),
+    );
   }
 
   void playSound(SoundEffect soundEffect) {
@@ -412,6 +463,8 @@ class _TicTacToeState extends State<TicTacToe> {
       for (int i = 0; i < 9; i++) {
         totalMoves[i] = '';
       }
+      playerMoveIndices.clear();
+      aiMovesIndices.clear();
     });
   }
 }
