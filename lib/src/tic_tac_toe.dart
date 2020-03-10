@@ -4,6 +4,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 import './theme.dart';
+import './sound_effect.dart';
 
 enum Turn { player, ai }
 enum Winner { player, ai, draw, none }
@@ -17,7 +18,7 @@ class TicTacToe extends StatefulWidget {
 
 class _TicTacToeState extends State<TicTacToe> {
   final List<String> totalMoves = List(9);
-  final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
+  final SoundEffectPlayer soundEffectPlayer = SoundEffectPlayer();
   final List<int> playerMoves = List();
   final List<int> aiMoves = List();
   Turn turn;
@@ -78,48 +79,56 @@ class _TicTacToeState extends State<TicTacToe> {
   void playMove(int at) {
     if (movesLeft.length > 0) {
       if (turn == Turn.player) {
+        print('Player mark at: $at'); // temp
+
         setState(() {
           totalMoves[at] = playerMark;
           playerMoves.add(at);
           turn = Turn.ai;
+          soundEffectPlayer.play(SoundEffect.playerMove);
         });
       } else {
         setState(() {
+          print('Ai Mark at: $at'); // temp
+
           totalMoves[at] = aiMark;
           aiMoves.add(at);
           turn = Turn.player;
+          soundEffectPlayer.play(SoundEffect.playerMove);
         });
       }
     } else {
+      print('No more moves left'); // temp
       // Review: Decide winner or draw.
     }
   }
 
   void aiAutoPlay() {
     if (movesLeft.length > 0) {
-      movesLeft.shuffle();
-
-      Random random = Random();
-      bool gotNextMove = false;
-      int nextMove = 0;
-
-      while (gotNextMove != true) {
-        nextMove = random.nextInt(movesLeft.length);
-        if (isMoveAvailable(nextMove)) {
-          gotNextMove = true;
-          break;
-        }
-      }
-
-      playMove(nextMove);
+      playRandomMove();
     } else {
+      print('No more moves left'); // temp
       // Review: Decide winner or draw.
     }
   }
 
+  /// Plays a random move, if one is left.
+  void playRandomMove() {
+    if (movesLeft.length > 0) {
+      movesLeft.shuffle();
+
+      // Pick a random move from the shuffled movesLeft list and play it.
+      playMove(movesLeft[Random().nextInt(movesLeft.length)]);
+    } else {
+      print('No more moves left'); //temp
+      // Review: Decide winner, draw, or gameover.
+    }
+  }
+
+  /// Returns true if the move [at] is available to play.
   bool isMoveAvailable(int at) => totalMoves[at].isEmpty;
 
-  // Returns the number of moves that are left to play.
+  /// Returns the number of moves that are left to play.
   List<int> get movesLeft {
     List<int> remainingMoves = List();
 
