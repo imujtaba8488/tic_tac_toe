@@ -34,7 +34,10 @@ class _TicTacToeState extends State<TicTacToe> {
   @override
   Widget build(BuildContext context) {
     if (turn == Turn.ai) {
-      aiAutoPlay();
+      // AI play is delayed by half a second.
+      Future.delayed(Duration(milliseconds: 500), () {
+        aiAutoPlay();
+      });
     }
 
     return Scaffold(
@@ -79,8 +82,6 @@ class _TicTacToeState extends State<TicTacToe> {
   void playMove(int at) {
     if (movesLeft.length > 0) {
       if (turn == Turn.player) {
-        print('Player mark at: $at'); // temp
-
         setState(() {
           totalMoves[at] = playerMark;
           playerMoves.add(at);
@@ -94,7 +95,7 @@ class _TicTacToeState extends State<TicTacToe> {
           totalMoves[at] = aiMark;
           aiMoves.add(at);
           turn = Turn.player;
-          soundEffectPlayer.play(SoundEffect.playerMove);
+          soundEffectPlayer.play(SoundEffect.aiMove);
         });
       }
     } else {
@@ -140,5 +141,131 @@ class _TicTacToeState extends State<TicTacToe> {
     }
 
     return remainingMoves;
+  }
+
+  int winningProbability(List<int> moves) {
+    // Horizontal Possibilities.
+    if (moves.contains(0) && moves.contains(1) && totalMoves[2].isEmpty) {
+      return 2;
+    } else if (moves.contains(0) &&
+        moves.contains(2) &&
+        totalMoves[1].isEmpty) {
+      return 1;
+    } else if (moves.contains(1) &&
+        moves.contains(2) &&
+        totalMoves[0].isEmpty) {
+      return 0;
+    } else if (moves.contains(3) &&
+        moves.contains(5) &&
+        totalMoves[3].isEmpty) {
+      return 3;
+    } else {
+      return -1;
+    }
+  }
+
+  /// this is complete ...
+  int horizontalWinProbability(List<int> moves) {
+    if (moves.contains(0) && moves.contains(1) && totalMoves[2].isEmpty) {
+      return 2;
+    } else if (moves.contains(0) &&
+        moves.contains(2) &&
+        totalMoves[1].isEmpty) {
+      return 1;
+    } else if (moves.contains(1) &&
+        moves.contains(2) &&
+        totalMoves[0].isEmpty) {
+      return 0;
+    } else if (moves.contains(3) &&
+        moves.contains(4) &&
+        totalMoves[5].isEmpty) {
+      return 5;
+    } else if (moves.contains(3) &&
+        moves.contains(5) &&
+        totalMoves[4].isEmpty) {
+      return 4;
+    } else if (moves.contains(4) &&
+        moves.contains(5) &&
+        totalMoves[3].isEmpty) {
+      return 3;
+    } else if(moves.contains(6) && moves.contains(7) && totalMoves[8].isEmpty) {
+      return 8;
+    } else if(moves.contains(6) && moves.contains(8) && totalMoves[7].isEmpty) {
+      return 7;
+    } else if(moves.contains(7) && moves.contains(8) && totalMoves[6].isEmpty) {
+      return 6;
+    } else {
+      return -1;
+    }
+  }
+
+  // Review: this is incomplete...
+  int verticalWinProbability(List<int> moves) {
+    if (moves.contains(0) && moves.contains(1) && totalMoves[2].isEmpty) {
+      return 2;
+    } else if (moves.contains(0) &&
+        moves.contains(2) &&
+        totalMoves[1].isEmpty) {
+      return 1;
+    } else if (moves.contains(1) &&
+        moves.contains(2) &&
+        totalMoves[0].isEmpty) {
+      return 0;
+    } else if (moves.contains(3) &&
+        moves.contains(4) &&
+        totalMoves[5].isEmpty) {
+      return 5;
+    } else if (moves.contains(3) &&
+        moves.contains(5) &&
+        totalMoves[4].isEmpty) {
+      return 4;
+    } else if (moves.contains(4) &&
+        moves.contains(5) &&
+        totalMoves[3].isEmpty) {
+      return 3;
+    } else if(moves.contains(6) && moves.contains(7) && totalMoves[8].isEmpty) {
+      return 8;
+    } else if(moves.contains(6) && moves.contains(8) && totalMoves[7].isEmpty) {
+      return 7;
+    } else if(moves.contains(7) && moves.contains(8) && totalMoves[6].isEmpty) {
+      return 6;
+    } else {
+      return -1;
+    }
+  }
+
+  // Review: this is incomplete...
+  int diagonalWinProbability(List<int> moves) {
+    if (moves.contains(0) && moves.contains(1) && totalMoves[2].isEmpty) {
+      return 2;
+    } else if (moves.contains(0) &&
+        moves.contains(2) &&
+        totalMoves[1].isEmpty) {
+      return 1;
+    } else if (moves.contains(1) &&
+        moves.contains(2) &&
+        totalMoves[0].isEmpty) {
+      return 0;
+    } else if (moves.contains(3) &&
+        moves.contains(4) &&
+        totalMoves[5].isEmpty) {
+      return 5;
+    } else if (moves.contains(3) &&
+        moves.contains(5) &&
+        totalMoves[4].isEmpty) {
+      return 4;
+    } else if (moves.contains(4) &&
+        moves.contains(5) &&
+        totalMoves[3].isEmpty) {
+      return 3;
+    } else if(moves.contains(6) && moves.contains(7) && totalMoves[8].isEmpty) {
+      return 8;
+    } else if(moves.contains(6) && moves.contains(8) && totalMoves[7].isEmpty) {
+      return 7;
+    } else if(moves.contains(7) && moves.contains(8) && totalMoves[6].isEmpty) {
+      return 6;
+    } else {
+      return -1;
+    }
   }
 }
