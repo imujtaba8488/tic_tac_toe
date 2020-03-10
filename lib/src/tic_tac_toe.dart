@@ -4,7 +4,6 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 import './theme.dart';
-import 'gameover.dart';
 
 enum Turn { player, ai }
 enum Winner { player, ai, draw, none }
@@ -19,31 +18,22 @@ class TicTacToe extends StatefulWidget {
 class _TicTacToeState extends State<TicTacToe> {
   final List<String> totalMoves = List(9);
   final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
-  final List<int> playerMoveIndices = List();
-  final List<int> aiMovesIndices = List();
+  final List<int> playerMoves = List();
+  final List<int> aiMoves = List();
   Turn turn;
-  Winner winner;
   String playerMark = 'X', aiMark = '0';
-  int playerScore = 0;
-  int aiScore = 0;
 
   @override
   void initState() {
     totalMoves.fillRange(0, 9, '');
     turn = Turn.player;
-    winner = Winner.none;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // If it's ai's turn, play ai's turn.
-    if (!hasWon()) {
-      if (turn == Turn.ai) {
-        Future.delayed(const Duration(seconds: 1), () {
-          aiPlay();
-        });
-      }
+    if (turn == Turn.ai) {
+      aiAutoPlay();
     }
 
     return Scaffold(
@@ -61,7 +51,9 @@ class _TicTacToeState extends State<TicTacToe> {
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      playMove(index);
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(),
@@ -74,8 +66,6 @@ class _TicTacToeState extends State<TicTacToe> {
                 },
               ),
             ),
-            Text('Player Score: $playerScore'),
-            Text('AI Score: $aiScore'),
             Divider(
               color: Colors.amber,
             ),
@@ -83,5 +73,63 @@ class _TicTacToeState extends State<TicTacToe> {
         ),
       ),
     );
+  }
+
+  void playMove(int at) {
+    if (movesLeft.length > 0) {
+      if (turn == Turn.player) {
+        setState(() {
+          totalMoves[at] = playerMark;
+          playerMoves.add(at);
+          turn = Turn.ai;
+        });
+      } else {
+        setState(() {
+          totalMoves[at] = aiMark;
+          aiMoves.add(at);
+          turn = Turn.player;
+        });
+      }
+    } else {
+      // Review: Decide winner or draw.
+    }
+  }
+
+  void aiAutoPlay() {
+    if (movesLeft.length > 0) {
+      movesLeft.shuffle();
+
+      Random random = Random();
+      bool gotNextMove = false;
+      int nextMove = 0;
+
+      while (gotNextMove != true) {
+        nextMove = random.nextInt(movesLeft.length);
+        if (isMoveAvailable(nextMove)) {
+          gotNextMove = true;
+          break;
+        }
+      }
+
+      playMove(nextMove);
+    } else {
+      // Review: Decide winner or draw.
+    }
+  }
+
+  bool isMoveAvailable(int at) => totalMoves[at].isEmpty;
+
+  // Returns the number of moves that are left to play.
+  List<int> get movesLeft {
+    List<int> remainingMoves = List();
+
+    // Check for empty element in totalMoves and add that to remainingMoves.
+    for (int i = 0; i < totalMoves.length; i++) {
+      if (totalMoves[i].isEmpty) {
+        remainingMoves.add(i);
+      }
+    }
+
+    return remainingMoves;
   }
 }
