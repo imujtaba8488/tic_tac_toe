@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/src/game_board.dart';
 
-import 'src/tic_tac_toe.dart';
 import 'src/theme.dart';
 
 void main() => runApp(MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Tic Tac Toe',
       theme: MyTheme().theme,
-      home: TicTacToe(),
+      home: GameBoard(),
     );
   }
 }
