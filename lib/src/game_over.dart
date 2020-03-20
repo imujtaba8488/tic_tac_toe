@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:augmentory/augmentory.dart';
+
 class GameOver extends StatelessWidget {
   final String message;
   final Function onPlayAgain;
@@ -9,7 +11,14 @@ class GameOver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('$message'),
+      title: ListTile(
+        title: message.containsIgnoreCase('draw')
+            ? Text('Phew!')
+            : message.containsIgnoreCase('ai')
+                ? Text('Better Luck Next time!!')
+                : Text('Congratulations!!!'),
+        subtitle: Text(message),
+      ),
       actions: <Widget>[
         RaisedButton(
           onPressed: onPlayAgain,

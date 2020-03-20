@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'theme.dart';
 import 'game_logic.dart';
+import 'game_over.dart';
 
 class GameBoard extends StatefulWidget {
   GameBoard({Key key}) : super(key: key);
@@ -39,7 +40,11 @@ class _GameBoardState extends State<GameBoard> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      playerMove(index);
+                      if (gameLogic.hasAIWon || gameLogic.hasPlayerWon) {
+                        // Review: What should happen here...
+                      } else {
+                        playerMove(index);
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -67,35 +72,51 @@ class _GameBoardState extends State<GameBoard> {
       });
 
       if (gameLogic.hasPlayerWon) {
-        print('You won!');
-        clearBoard();
+        showGameOver('You won!');
       }
     } else {
-      print("seems like a draw");
-      clearBoard();
+      showGameOver('Its a Draw!');
     }
   }
 
   void aiMoveIfTurn() {
-    // AI move is followed by a check to find out if the AI has won.
-    if (gameLogic.turn == Turn.ai) {
-      // AI play is delayed by half a second.
-      Future.delayed(Duration(milliseconds: 500), () {
-        if (gameLogic.movesLeft.length > 0) {
-          setState(() {
-            gameLogic.aiAutoPlay();
-          });
-        } else {
-          print('seems like a draw');
-          clearBoard();
-        }
+    // Don't play the turn if either the AI or the player has won.
+    if (gameLogic.hasAIWon || gameLogic.hasPlayerWon) {
+      // Reveiw: What should happen here??
+    } else {
+      // AI move is followed by a check to find out if the AI has won.
+      if (gameLogic.turn == Turn.ai) {
+        // AI play is delayed by half a second.
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (gameLogic.movesLeft.length > 0) {
+            setState(() {
+              gameLogic.aiAutoPlay();
+            });
+          } else {
+            showGameOver('Its a Draw!');
+          }
 
-        if (gameLogic.hasAIWon) {
-          print("AI has won!");
-          clearBoard();
-        }
-      });
+          if (gameLogic.hasAIWon) {
+            showGameOver('AI has Won');
+          }
+
+          // Review: Added because if the AI makes the first move and its a draw the alert doesn't pop. Will this solve that issue? It definitely does...
+          if (gameLogic.movesLeft.length <= 0) {
+            showGameOver('Its a Draw');
+          }
+        });
+      }
     }
+  }
+
+  void showGameOver(String whoWon) {
+    showDialog(
+      context: context,
+      child: GameOver(whoWon, () {
+        clearBoard();
+        Navigator.pop(context);
+      }),
+    );
   }
 
   void clearBoard() {

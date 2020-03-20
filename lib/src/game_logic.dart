@@ -20,10 +20,14 @@ class GameLogic {
   void playMove(int index) {
     if (movesLeft.length > 0) {
       if (turn == Turn.player) {
-        _totalMoves[index] = _playerMark;
-        _playerMoves.add(index);
-        turn = Turn.ai;
-        soundEffectPlayer.play(SoundEffect.playerMove);
+        if (_totalMoves[index].isEmpty) {
+          _totalMoves[index] = _playerMark;
+          _playerMoves.add(index);
+          turn = Turn.ai;
+          soundEffectPlayer.play(SoundEffect.playerMove);
+        } else {
+          print('error...');
+        }
       } else {
         _totalMoves[index] = _aiMark;
         _aiMoves.add(index);

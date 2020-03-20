@@ -25,6 +25,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   google_fonts: ^0.3.9
   assets_audio_player: ^1.2.3
+  augmentory:
+    path: '../augmentory'
 
 dev_dependencies:
   flutter_test:
