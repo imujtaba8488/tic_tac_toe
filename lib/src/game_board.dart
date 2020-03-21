@@ -22,7 +22,8 @@ class _GameBoardState extends State<GameBoard> {
   @override
   Widget build(BuildContext context) {
     if (gameLogic.turn == Turn.ai) {
-      gameLogic.aiAutoPlay(reportWinnerFound: showGameOver);
+      print('AI turn');
+      WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
     }
 
     return Scaffold(
@@ -41,7 +42,7 @@ class _GameBoardState extends State<GameBoard> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      if (gameLogic.hasAIWon || gameLogic.hasPlayerWon) {
+                      if (gameLogic.hasAIWon || gameLogic.hasUserWon) {
                         // Review: What should happen here...
                       } else {
                         playMove(index);
@@ -67,19 +68,33 @@ class _GameBoardState extends State<GameBoard> {
 
   void playMove(int index) {
     setState(() {
-      gameLogic.playMove(index);
+      gameLogic.playMove2(index, reportWinner: showGameOver);
     });
+
+    // if (gameLogic.turn == Turn.ai) {
+    //   setState(() {
+    //     gameLogic.aiAutoPlay(reportWinnerFound: showGameOver);
+    //   });
+    // }
   }
 
   void showGameOver(Winner winner) {
-    print(
-      'Winner is: ${winner == Winner.ai ? 'AI is the Winner' : 'Player is the Winner'}',
+    showDialog(
+      context: context,
+      child: GameOver(winner.toString(), clearBoard),
     );
   }
 
   void clearBoard() {
+    gameLogic.resetGame();
+    Navigator.pop(context);
+    setState(() {});
+  }
+
+  _afterLayout(_) {
+    print('inside _afterLayout');
     setState(() {
-      gameLogic.resetGame();
+      gameLogic.aiAutoPlay2(reportWinner: showGameOver);
     });
   }
 }
