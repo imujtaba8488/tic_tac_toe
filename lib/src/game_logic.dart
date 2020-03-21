@@ -31,9 +31,16 @@ class GameLogic {
           user.movesPlayed.add(index);
           _switchTurn();
 
+          print('User Played'); // Temp.
+
           // After the move has been played.
           if (hasUserWon) {
             winner = Winner.player;
+            reportWinner(winner);
+          }
+
+          if (!anyMoveLeft) {
+            winner = Winner.draw;
             reportWinner(winner);
           }
         } else {
@@ -41,9 +48,16 @@ class GameLogic {
           ai.movesPlayed.add(index);
           _switchTurn();
 
+          print('AI Played'); // Temp.
+
           // After the move has been played.
           if (hasAIWon) {
             winner = Winner.ai;
+            reportWinner(winner);
+          }
+
+          if (!anyMoveLeft) {
+            winner = Winner.draw;
             reportWinner(winner);
           }
         }
@@ -55,12 +69,6 @@ class GameLogic {
       reportWinner(Winner.draw);
     }
   }
-
-  bool get anyMoveLeft => movesLeft.length > 0;
-
-  bool isMoveAvailable(int index) => _totalMoves[index].isEmpty;
-
-  void _switchTurn() => turn == Turn.ai ? turn = Turn.player : turn = Turn.ai;
 
   void aiAutoPlay({Function reportWinner, Function reportError}) {
     if (winner == Winner.none) {
@@ -79,6 +87,7 @@ class GameLogic {
       } else {
         // Declare draw if a random move is not available.
         if (!_playRandomMove()) {
+          print("** DRAW in Random **");
           winner = Winner.draw;
           reportWinner(winner);
         }
@@ -88,7 +97,16 @@ class GameLogic {
 
   /// Plays a random move, if one is left.
   bool _playRandomMove() {
-    if (movesLeft.length > 0) {
+    // First, get all the moves that are left to play. Then randomly shuffle the moves that are left. Finally, pick a random move from the randomly shuffled list of moves that were left.
+    List<int> movesLeft = [];
+
+    for (int i = 0; i < _totalMoves.length; i++) {
+      if (_totalMoves[i].isEmpty) {
+        movesLeft.add(i);
+      }
+    }
+
+    if (anyMoveLeft) {
       movesLeft.shuffle();
 
       // Pick a random move from the shuffled movesLeft list and play it.
@@ -99,31 +117,30 @@ class GameLogic {
     }
   }
 
-  List<int> get movesLeft {
-    List<int> remainingMoves = List();
-
+  void resetGame() {
     for (int i = 0; i < _totalMoves.length; i++) {
-      if (_totalMoves[i] == '') {
-        remainingMoves.add(i);
-      }
+      _totalMoves[i] = '';
     }
 
-    return remainingMoves;
+    ai.movesPlayed.clear();
+    user.movesPlayed.clear();
+
+    winner = Winner.none;
+
+    _switchTurn();
   }
+
+  void _switchTurn() => turn == Turn.ai ? turn = Turn.player : turn = Turn.ai;
+
+  //*** Gettes and Setters ***//
 
   bool get hasAIWon => hasWon(ai.movesPlayed);
 
   bool get hasUserWon => hasWon(user.movesPlayed);
 
-  void resetGame() {
-    for (int i = 0; i < _totalMoves.length; i++) {
-      _totalMoves[i] = '';
-    }
-    // _aiMoves.clear();
-    // _playerMoves.clear();
+  bool get anyMoveLeft => _totalMoves.contains('');
 
-    _switchTurn();
-  }
+  bool isMoveAvailable(int index) => _totalMoves[index].isEmpty;
 }
 
 enum Turn { player, ai }

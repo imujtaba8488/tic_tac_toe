@@ -21,9 +21,10 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    if (gameLogic.turn == Turn.ai) {
-      print('AI turn');
-      WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    if (gameLogic.winner == Winner.none) {
+      if (gameLogic.turn == Turn.ai) {
+        WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+      }
     }
 
     return Scaffold(
@@ -42,9 +43,7 @@ class _GameBoardState extends State<GameBoard> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      if (gameLogic.hasAIWon || gameLogic.hasUserWon) {
-                        // Review: What should happen here...
-                      } else {
+                      if (gameLogic.winner == Winner.none) {
                         playMove(index);
                       }
                     },
@@ -68,14 +67,8 @@ class _GameBoardState extends State<GameBoard> {
 
   void playMove(int index) {
     setState(() {
-      gameLogic.playMove2(index, reportWinner: showGameOver);
+      gameLogic.playMove(index, reportWinner: showGameOver);
     });
-
-    // if (gameLogic.turn == Turn.ai) {
-    //   setState(() {
-    //     gameLogic.aiAutoPlay(reportWinnerFound: showGameOver);
-    //   });
-    // }
   }
 
   void showGameOver(Winner winner) {
@@ -92,9 +85,8 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   _afterLayout(_) {
-    print('inside _afterLayout');
     setState(() {
-      gameLogic.aiAutoPlay2(reportWinner: showGameOver);
+      gameLogic.aiAutoPlay(reportWinner: showGameOver);
     });
   }
 }
