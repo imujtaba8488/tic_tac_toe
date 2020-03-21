@@ -9,6 +9,9 @@ class GameLogic {
   final List<int> _playerMoves = [];
   final List<int> _aiMoves = [];
   Turn turn = Turn.player;
+  Winner winner = Winner.none;
+  Error error = Error.none;
+  bool _winnerFound = false;
   final SoundEffectPlayer soundEffectPlayer = SoundEffectPlayer();
 
   GameLogic() {
@@ -17,47 +20,101 @@ class GameLogic {
 
   List<String> get movesPlayed => List.of(_totalMoves);
 
-  void playMove(int index) {
+  // Review: Think about it like this. When you call this method, you are asking it to play a move. Once the move is played, you want to know whether this was the winning move i.e. someone has won, or this move resulted in a draw or an error.
+  void playMove(
+    int index, {
+    Function reportWinnerFound,
+    Function drawDeclared,
+    Function reportError,
+  }) {
+    // First check if a move is left to play, if one is left find out who's turn it is, then check out if that move is playable i.e. that place is not already taken by someone else i.e. player or ai. If the move is playable, play the move and then check if this move resulted in a victory, draw, error or nothing.
     if (movesLeft.length > 0) {
       if (turn == Turn.player) {
         if (_totalMoves[index].isEmpty) {
           _totalMoves[index] = _playerMark;
           _playerMoves.add(index);
           turn = Turn.ai;
-          soundEffectPlayer.play(SoundEffect.playerMove);
+          // soundEffectPlayer.play(SoundEffect.playerMove);
+
+          // after the move is played
+          if (hasPlayerWon) {
+            _winnerFound = true;
+            winner = Winner.player;
+            reportWinnerFound != null
+                ? reportWinnerFound(winner)
+                : print('Player has won');
+          }
         } else {
           print('error...');
         }
-      } else {
-        _totalMoves[index] = _aiMark;
-        _aiMoves.add(index);
-        turn = Turn.player;
-        soundEffectPlayer.play(SoundEffect.aiMove);
+      } else if (turn == Turn.ai) {
+        if (_totalMoves[index].isEmpty) {
+          _totalMoves[index] = _aiMark;
+          _aiMoves.add(index);
+          turn = Turn.player;
+          // soundEffectPlayer.play(SoundEffect.aiMove);
+
+          // after the move is played
+          if (hasAIWon) {
+            _winnerFound = true;
+            winner = Winner.ai;
+            reportWinnerFound != null
+                ? reportWinnerFound(winner)
+                : print("AI has won.");
+          }
+        } else {
+          error = Error.place_taken;
+          reportError != null
+              ? reportError(error)
+              : print("Error: Place taken");
+        }
       }
     } else {
-      print('No more moves left');
+      winner = Winner.draw;
+      drawDeclared != null ? drawDeclared() : print('It is a draw!');
     }
   }
 
-  void aiAutoPlay() {
-    if (_isWinPossibeFor(_aiMoves) != -1) {
-      playMove(_isWinPossibeFor(_aiMoves));
-    } else if (_isWinPossibeFor(_playerMoves) != -1) {
-      playMove(_isWinPossibeFor(_playerMoves));
-    } else {
-      _playRandomMove();
+  void aiAutoPlay({
+    Function reportWinnerFound,
+    Function drawDeclared,
+    Function reportError,
+  }) {
+    // AI should only play if the winner is not yet found, or a move is still left to play.
+    if (!_winnerFound) {
+      if (_isWinPossibeFor(_aiMoves) != -1) {
+        playMove(
+          _isWinPossibeFor(_aiMoves),
+          reportWinnerFound: reportWinnerFound,
+          drawDeclared: drawDeclared,
+          reportError: reportError,
+        );
+      } else if (_isWinPossibeFor(_playerMoves) != -1) {
+        playMove(
+          _isWinPossibeFor(_playerMoves),
+          reportWinnerFound: reportWinnerFound,
+          drawDeclared: drawDeclared,
+          reportError: reportError,
+        );
+      } else {
+        // Declare draw if a random move is not available.
+        if(!_playRandomMove()) {
+          drawDeclared != null ? drawDeclared() : print("It is a draw");
+        }
+      }
     }
   }
 
   /// Plays a random move, if one is left.
-  void _playRandomMove() {
+  bool _playRandomMove() {
     if (movesLeft.length > 0) {
       movesLeft.shuffle();
 
       // Pick a random move from the shuffled movesLeft list and play it.
       playMove(movesLeft[Random().nextInt(movesLeft.length)]);
+      return true;
     } else {
-      print('No more moves left');
+      return false;
     }
   }
 
@@ -244,3 +301,7 @@ class GameLogic {
 }
 
 enum Turn { player, ai }
+
+enum Winner { player, ai, draw, none }
+
+enum Error { place_taken, none }

@@ -21,8 +21,9 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    // When rebuilding check if it's AIs' turn or the players'.
-    aiMoveIfTurn();
+    if (gameLogic.turn == Turn.ai) {
+      gameLogic.aiAutoPlay(reportWinnerFound: showGameOver);
+    }
 
     return Scaffold(
       backgroundColor: MyTheme().theme.primaryColor,
@@ -43,7 +44,7 @@ class _GameBoardState extends State<GameBoard> {
                       if (gameLogic.hasAIWon || gameLogic.hasPlayerWon) {
                         // Review: What should happen here...
                       } else {
-                        playerMove(index);
+                        playMove(index);
                       }
                     },
                     child: Container(
@@ -64,58 +65,15 @@ class _GameBoardState extends State<GameBoard> {
     );
   }
 
-  void playerMove(int at) {
-    // Player move is followed by a check to find out if the player has won.
-    if (gameLogic.movesLeft.length > 0) {
-      setState(() {
-        gameLogic.playMove(at);
-      });
-
-      if (gameLogic.hasPlayerWon) {
-        showGameOver('You won!');
-      }
-    } else {
-      showGameOver('Its a Draw!');
-    }
+  void playMove(int index) {
+    setState(() {
+      gameLogic.playMove(index);
+    });
   }
 
-  void aiMoveIfTurn() {
-    // Don't play the turn if either the AI or the player has won.
-    if (gameLogic.hasAIWon || gameLogic.hasPlayerWon) {
-      // Reveiw: What should happen here??
-    } else {
-      // AI move is followed by a check to find out if the AI has won.
-      if (gameLogic.turn == Turn.ai) {
-        // AI play is delayed by half a second.
-        Future.delayed(Duration(milliseconds: 500), () {
-          if (gameLogic.movesLeft.length > 0) {
-            setState(() {
-              gameLogic.aiAutoPlay();
-            });
-          } else {
-            showGameOver('Its a Draw!');
-          }
-
-          if (gameLogic.hasAIWon) {
-            showGameOver('AI has Won');
-          }
-
-          // Review: Added because if the AI makes the first move and its a draw the alert doesn't pop. Will this solve that issue? It definitely does...
-          if (gameLogic.movesLeft.length <= 0) {
-            showGameOver('Its a Draw');
-          }
-        });
-      }
-    }
-  }
-
-  void showGameOver(String whoWon) {
-    showDialog(
-      context: context,
-      child: GameOver(whoWon, () {
-        clearBoard();
-        Navigator.pop(context);
-      }),
+  void showGameOver(Winner winner) {
+    print(
+      'Winner is: ${winner == Winner.ai ? 'AI is the Winner' : 'Player is the Winner'}',
     );
   }
 
