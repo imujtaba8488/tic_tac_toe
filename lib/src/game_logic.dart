@@ -9,7 +9,7 @@ class GameLogic {
   final List<String> _totalMoves = List(9);
   final Player user = Player();
   final Player ai = Player();
-  Turn turn = Turn.player;
+  Turn turn = Turn.user;
   Winner winner = Winner.none;
   Error error = Error.none;
   final SoundEffectPlayer _soundEffectPlayer = SoundEffectPlayer();
@@ -28,7 +28,7 @@ class GameLogic {
   void playMove(int index, {Function reportWinner, reportError}) {
     if (anyMoveLeft) {
       if (isMoveAvailable(index)) {
-        if (turn == Turn.player) {
+        if (turn == Turn.user) {
           _totalMoves[index] = user.mark;
           user.movesPlayed.add(index);
           _switchTurn();
@@ -132,7 +132,7 @@ class GameLogic {
     _soundEffectPlayer.stop();
   }
 
-  void _switchTurn() => turn == Turn.ai ? turn = Turn.player : turn = Turn.ai;
+  void _switchTurn() => turn == Turn.ai ? turn = Turn.user : turn = Turn.ai;
 
   void _printWinner() {
     switch (winner) {
@@ -172,7 +172,7 @@ class GameLogic {
   bool isMoveAvailable(int index) => _totalMoves[index].isEmpty;
 }
 
-enum Turn { player, ai }
+enum Turn { user, ai }
 
 enum Winner { user, ai, draw, none }
 
