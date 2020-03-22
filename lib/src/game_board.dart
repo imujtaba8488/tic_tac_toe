@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/src/sound_effect.dart';
 
-import 'theme.dart';
 import 'game_logic.dart';
 import 'game_over.dart';
+import 'theme.dart';
 
 class GameBoard extends StatefulWidget {
   GameBoard({Key key}) : super(key: key);
@@ -21,11 +22,15 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
+    // Important and only required when playing against the AI. Calls the AI post rendering the current board modifications. Calling it post rendering is required in order to display an alert (if gameover), otherwise, it displays an error if an alert is displayed while the UI is rebuilt.
     if (gameLogic.winner == Winner.none) {
       if (gameLogic.turn == Turn.ai) {
         WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
       }
     }
+
+    SoundEffectPlayer soundEffectPlayer = SoundEffectPlayer();
+    soundEffectPlayer.loop();
 
     return Scaffold(
       backgroundColor: MyTheme().theme.primaryColor,
@@ -43,9 +48,7 @@ class _GameBoardState extends State<GameBoard> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      if (gameLogic.winner == Winner.none) {
-                        playMove(index);
-                      }
+                      playMove(index);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -65,6 +68,7 @@ class _GameBoardState extends State<GameBoard> {
     );
   }
 
+  /// Plays the move at the given [index].
   void playMove(int index) {
     setState(() {
       gameLogic.playMove(index, reportWinner: showGameOver);
@@ -78,15 +82,19 @@ class _GameBoardState extends State<GameBoard> {
     );
   }
 
+  /// Clears the board, exits the gameover alert, and resets the game.
   void clearBoard() {
     gameLogic.resetGame();
     Navigator.pop(context);
     setState(() {});
   }
 
+  /// Plays the AI move after the specified delay.
   _afterLayout(_) {
-    setState(() {
-      gameLogic.aiAutoPlay(reportWinner: showGameOver);
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        gameLogic.aiAutoPlay(reportWinner: showGameOver);
+      });
     });
   }
 }

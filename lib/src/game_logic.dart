@@ -12,10 +12,12 @@ class GameLogic {
   Turn turn = Turn.player;
   Winner winner = Winner.none;
   Error error = Error.none;
-  final SoundEffectPlayer soundEffectPlayer = SoundEffectPlayer();
+  final SoundEffectPlayer _soundEffectPlayer = SoundEffectPlayer();
 
   GameLogic() {
     _totalMoves.fillRange(0, 9, '');
+    user.name = 'User';
+    ai.name = 'AI';
     user.mark = 'X';
     ai.mark = '0';
   }
@@ -30,66 +32,66 @@ class GameLogic {
           _totalMoves[index] = user.mark;
           user.movesPlayed.add(index);
           _switchTurn();
+          _soundEffectPlayer.play(SoundEffect.userMove);
 
-          print('User Played'); // Temp.
-
-          // After the move has been played.
+          // Once the move has been played, check if user is the winner or if this was the last move of the game, hence a draw.
           if (hasUserWon) {
-            winner = Winner.player;
-            reportWinner(winner);
-          }
-
-          if (!anyMoveLeft) {
+            winner = Winner.user;
+            reportWinner != null ? reportWinner(winner) : _printWinner();
+            _soundEffectPlayer.play(SoundEffect.win);
+          } else if (anyMoveLeft == false) {
             winner = Winner.draw;
-            reportWinner(winner);
+            reportWinner != null ? reportWinner(winner) : _printWinner();
+            _soundEffectPlayer.play(SoundEffect.draw);
           }
         } else {
           _totalMoves[index] = ai.mark;
           ai.movesPlayed.add(index);
           _switchTurn();
+          _soundEffectPlayer.play(SoundEffect.aiMove);
 
-          print('AI Played'); // Temp.
-
-          // After the move has been played.
+          // Once the move has been played, check if user is the winner or if this was the last move of the game, hence a draw.
           if (hasAIWon) {
             winner = Winner.ai;
-            reportWinner(winner);
-          }
-
-          if (!anyMoveLeft) {
+            reportWinner != null ? reportWinner(winner) : _printWinner();
+            _soundEffectPlayer.play(SoundEffect.lost);
+          } else if (anyMoveLeft == false) {
             winner = Winner.draw;
-            reportWinner(winner);
+            reportWinner != null ? reportWinner(winner) : _printWinner();
+            _soundEffectPlayer.play(SoundEffect.draw);
           }
         }
       } else {
-        reportError(Error.place_taken);
+        error = Error.place_taken;
+        reportError != null ? reportError(Error.place_taken) : _printError();
+        _soundEffectPlayer.play(SoundEffect.error);
       }
     } else {
       winner = Winner.draw;
       reportWinner(Winner.draw);
+      _soundEffectPlayer.play(SoundEffect.draw);
     }
   }
 
   void aiAutoPlay({Function reportWinner, Function reportError}) {
     if (winner == Winner.none) {
-      if (isWinPossibe(ai.movesPlayed, _totalMoves) != -1) {
+      if (isWinPossible(ai.movesPlayed, _totalMoves) != -1) {
         playMove(
-          isWinPossibe(ai.movesPlayed, _totalMoves),
+          isWinPossible(ai.movesPlayed, _totalMoves),
           reportWinner: reportWinner,
           reportError: reportError,
         );
-      } else if (isWinPossibe(user.movesPlayed, _totalMoves) != -1) {
+      } else if (isWinPossible(user.movesPlayed, _totalMoves) != -1) {
         playMove(
-          isWinPossibe(user.movesPlayed, _totalMoves),
+          isWinPossible(user.movesPlayed, _totalMoves),
           reportWinner: reportWinner,
           reportError: reportError,
         );
       } else {
         // Declare draw if a random move is not available.
         if (!_playRandomMove()) {
-          print("** DRAW in Random **");
           winner = Winner.draw;
-          reportWinner(winner);
+          reportWinner != null ? reportWinner(winner) : _printWinner();
         }
       }
     }
@@ -127,12 +129,39 @@ class GameLogic {
 
     winner = Winner.none;
 
-    _switchTurn();
+    _soundEffectPlayer.stop();
   }
 
   void _switchTurn() => turn == Turn.ai ? turn = Turn.player : turn = Turn.ai;
 
-  //*** Gettes and Setters ***//
+  void _printWinner() {
+    switch (winner) {
+      case Winner.ai:
+        print('${ai.name} is the winner!');
+        break;
+
+      case Winner.user:
+        print('${user.name} is the winner!');
+        break;
+
+      default:
+        print('It is a draw!');
+        break;
+    }
+  }
+
+  void _printError() {
+    switch (error) {
+      case Error.place_taken:
+        print('Error: Place is already taken');
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  //*** Getters and Setters ***//
 
   bool get hasAIWon => hasWon(ai.movesPlayed);
 
@@ -145,6 +174,6 @@ class GameLogic {
 
 enum Turn { player, ai }
 
-enum Winner { player, ai, draw, none }
+enum Winner { user, ai, draw, none }
 
 enum Error { place_taken, none }

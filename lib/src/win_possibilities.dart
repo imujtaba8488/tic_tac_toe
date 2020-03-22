@@ -1,5 +1,5 @@
 /// Return -1, if win is not possible for [forMoves], else returns the index where the win is possible for [forMoves] within the grid.
-int isWinPossibe(List<int> forMoves, List<String> inMoves) {
+int isWinPossible(List<int> forMoves, List<String> inMoves) {
   if (_isHorizontalWinPossible(forMoves, inMoves) != -1) {
     return _isHorizontalWinPossible(forMoves, inMoves);
   } else if (_isVerticalWinPossibleFor(forMoves, inMoves) != -1) {
