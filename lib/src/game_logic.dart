@@ -25,7 +25,12 @@ class GameLogic {
   List<String> get movesPlayed => List.of(_totalMoves);
 
   // Review: Think about it like this. When you call this method, you are asking it to play a move. Once the move is played, you want to know whether this was the winning move i.e. someone has won, or this move resulted in a draw or an error.
-  void playMove(int index, {Function reportWinner, reportError}) {
+  void playMove(
+    int index, {
+    Function reportWinner,
+    reportError,
+    Function reportScore,
+  }) {
     if (anyMoveLeft) {
       if (isMoveAvailable(index)) {
         if (turn == Turn.user) {
@@ -38,10 +43,18 @@ class GameLogic {
           if (hasUserWon) {
             winner = Winner.user;
             reportWinner != null ? reportWinner(winner) : _printWinner();
+
+            user.updateWin();
+            reportScore(user.score);
+
             _soundEffectPlayer.play(SoundEffect.win);
           } else if (anyMoveLeft == false) {
             winner = Winner.draw;
             reportWinner != null ? reportWinner(winner) : _printWinner();
+
+            user.updateDraw();
+            reportScore(user.score);
+
             _soundEffectPlayer.play(SoundEffect.draw);
           }
         } else {
@@ -54,10 +67,18 @@ class GameLogic {
           if (hasAIWon) {
             winner = Winner.ai;
             reportWinner != null ? reportWinner(winner) : _printWinner();
+
+            ai.updateWin();
+            reportScore(ai.score);
+
             _soundEffectPlayer.play(SoundEffect.lost);
           } else if (anyMoveLeft == false) {
             winner = Winner.draw;
             reportWinner != null ? reportWinner(winner) : _printWinner();
+
+            ai.updateDraw();
+            reportScore(ai.score);
+
             _soundEffectPlayer.play(SoundEffect.draw);
           }
         }
@@ -73,32 +94,45 @@ class GameLogic {
     }
   }
 
-  void aiAutoPlay({Function reportWinner, Function reportError}) {
+  void aiAutoPlay({
+    Function reportWinner,
+    Function reportError,
+    Function reportScore,
+  }) {
     if (winner == Winner.none) {
       if (isWinPossible(ai.movesPlayed, _totalMoves) != -1) {
         playMove(
           isWinPossible(ai.movesPlayed, _totalMoves),
           reportWinner: reportWinner,
           reportError: reportError,
+          reportScore: reportScore,
         );
       } else if (isWinPossible(user.movesPlayed, _totalMoves) != -1) {
         playMove(
           isWinPossible(user.movesPlayed, _totalMoves),
           reportWinner: reportWinner,
           reportError: reportError,
+          reportScore: reportScore,
         );
       } else {
         // Declare draw if a random move is not available.
-        if (!_playRandomMove()) {
+        if (!_playRandomMove(reportWinner, reportError, reportScore)) {
           winner = Winner.draw;
           reportWinner != null ? reportWinner(winner) : _printWinner();
+
+          ai.updateDraw();
+          reportScore(ai.score);
         }
       }
     }
   }
 
   /// Plays a random move, if one is left.
-  bool _playRandomMove() {
+  bool _playRandomMove(
+    Function reportWinner,
+    Function reportError,
+    Function reportScore,
+  ) {
     // First, get all the moves that are left to play. Then randomly shuffle the moves that are left. Finally, pick a random move from the randomly shuffled list of moves that were left.
     List<int> movesLeft = [];
 
@@ -112,7 +146,12 @@ class GameLogic {
       movesLeft.shuffle();
 
       // Pick a random move from the shuffled movesLeft list and play it.
-      playMove(movesLeft[Random().nextInt(movesLeft.length)]);
+      playMove(
+        movesLeft[Random().nextInt(movesLeft.length)],
+        reportWinner: reportWinner,
+        reportError: reportError,
+        reportScore: reportScore,
+      );
       return true;
     } else {
       return false;

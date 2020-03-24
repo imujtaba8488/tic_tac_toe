@@ -36,22 +36,19 @@ class SoundEffectPlayer {
         _audioPlayer.play();
         break;
 
+      case SoundEffect.background:
+        _audioPlayer.open('assets/audio/background.mp3');
+        _audioPlayer.play();
+        break;
+
       default:
         // Todo: Perhaps play the background sound or decide.
         break;
     }
   }
 
+
   void stop() {
     _audioPlayer.stop();
-  }
-
-  void loop() {
-    _audioPlayer.loop = true;
-    bool doLoop = _audioPlayer.loop;
-    _audioPlayer.isLooping.listen((doLoop){
-      _audioPlayer.open('assets/audio/background.mp3');
-      _audioPlayer.play();
-    });
   }
 }
