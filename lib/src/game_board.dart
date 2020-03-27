@@ -6,6 +6,7 @@ import 'game_logic.dart';
 import 'game_over.dart';
 import 'theme.dart';
 import 'score_board.dart';
+import 'purple_board.dart';
 
 class GameBoard extends StatefulWidget {
   GameBoard({Key key}) : super(key: key);
@@ -55,24 +56,7 @@ class _GameBoardState extends State<GameBoard> {
                     onTap: () {
                       playMove(index);
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          color: Colors.green,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blue,
-                              spreadRadius: 3,
-                            ),
-                            BoxShadow(
-                              color: Colors.grey,
-                              spreadRadius: 2
-                            )
-                          ]),
-                      child: Center(
-                        child: Text(gameLogic.movesPlayed[index]),
-                      ),
-                    ),
+                    child: PurpleBoard(gameLogic, index),
                   );
                 },
               ),
