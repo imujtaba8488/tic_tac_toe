@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/src/game_board.dart';
-
-import 'src/theme.dart';
+import 'package:tic_tac_toe/src/theme.dart';
 
 void main() => runApp(MyApp());
 

@@ -4,9 +4,10 @@ import 'package:augmentory/augmentory.dart';
 
 class GameOver extends StatelessWidget {
   final String message;
-  final Function onPlayAgain;
+  final Function onPressed;
+  final String buttonText;
 
-  GameOver(this.message, this.onPlayAgain);
+  GameOver(this.message, {this.onPressed, this.buttonText = 'Play Again'});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +22,11 @@ class GameOver extends StatelessWidget {
       ),
       actions: <Widget>[
         RaisedButton(
-          onPressed: onPlayAgain,
-          child: Text('Play Again'),
+          onPressed: () {
+            onPressed != null? onPressed() : print('');
+            Navigator.pop(context);
+          },
+          child: Text(buttonText),
         )
       ],
     );

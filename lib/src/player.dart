@@ -6,7 +6,7 @@ class Player {
   List<int> movesPlayed;
   Score _score;
 
-  Player() {
+  Player({this.name, this.mark}) {
     movesPlayed = [];
     _score = Score();
   }

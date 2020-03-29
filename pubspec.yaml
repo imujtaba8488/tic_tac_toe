@@ -29,6 +29,8 @@ dependencies:
   augmentory:
     path: '../augmentory'
   audiofileplayer: ^1.1.1
+  permission: ^0.1.7
+  scoped_model: ^1.0.1
 
 
 dev_dependencies:
@@ -54,6 +56,7 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/docs/colors.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

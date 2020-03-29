@@ -7,7 +7,7 @@ class MyTheme {
   MyTheme() {
     theme = ThemeData(
       // primarySwatch: Colors.grey[900]
-      primaryColor: Colors.deepPurple,
+      primaryColor: Colors.white,
       textTheme: TextTheme(
         body1: GoogleFonts.ubuntu(
           color: Colors.white,
