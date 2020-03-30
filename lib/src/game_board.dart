@@ -26,6 +26,7 @@ class _GameBoardState extends State<GameBoard> {
       Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
       Turn.player1,
       onGameStatusChange: showGameOver,
+      disableSoundEffects: true,
     );
     super.initState();
   }

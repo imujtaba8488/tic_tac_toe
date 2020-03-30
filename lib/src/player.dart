@@ -27,5 +27,5 @@ class Player {
   }
 
   // Later: Perhaps you may need to return a copy of this score.
-  void get score => _score;
+  Score get score => _score;
 }

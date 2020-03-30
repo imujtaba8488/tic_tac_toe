@@ -43,7 +43,7 @@ class _SuperWhiteState extends State<SuperWhite> {
               //     : decoration,
               child: Center(
                 child: Text(
-                  game.places[widget.index],
+                  game.moves[widget.index],
                   style: TextStyle(
                     color: Colors.black,
                   ),
