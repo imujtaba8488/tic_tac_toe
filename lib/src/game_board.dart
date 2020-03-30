@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/scoped_models/game_session.dart';
+import 'package:tic_tac_toe/src/player.dart';
+import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
+
+import 'package:tic_tac_toe/src/sound_effect.dart';
 
 import 'board_themes/super_white.dart';
 import 'game_over.dart';
@@ -14,18 +17,23 @@ class GameBoard extends StatefulWidget {
 }
 
 class _GameBoardState extends State<GameBoard> {
-  GameSession gameSession;
+  GameModel game;
 
   @override
   void initState() {
-    gameSession = GameSession(showGameOver);
+    game = GameModel(
+      Player(name: 'user', mark: 'X', moveSoundEffect: SoundEffect.userMove),
+      Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
+      Turn.player1,
+      onGameStatusChange: showGameOver,
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModel(
-      model: gameSession,
+      model: game,
       child: Scaffold(
         backgroundColor: MyTheme().theme.primaryColor,
         body: Padding(

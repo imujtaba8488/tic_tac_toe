@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/game.dart';
-import 'package:tic_tac_toe/src/player.dart';
-import 'package:tic_tac_toe/src/scoped_models/game_session.dart';
+import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
 
 class SuperWhite extends StatefulWidget {
   final int index;
@@ -16,17 +14,17 @@ class SuperWhite extends StatefulWidget {
 class _SuperWhiteState extends State<SuperWhite> {
   double borderWidth = 2.0;
   BoxDecoration decoration;
-  GameSession gameSession;
+  GameModel gameModel;
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<GameSession>(
-      builder: (context, child, gameSession) {
-        gameSession = gameSession;
+    return ScopedModelDescendant<GameModel>(
+      builder: (context, child, game) {
+        gameModel = game;
 
         return GestureDetector(
           onTap: () {
-            gameSession.playMove(widget.index);
+            game.playMove(widget.index);
           },
           onTapDown: onTapDown,
           onTapUp: onTapUp,
@@ -40,12 +38,12 @@ class _SuperWhiteState extends State<SuperWhite> {
               borderRadius: BorderRadius.circular(5),
             ),
             child: Container(
-              decoration: gameSession.game.winKey.contains(widget.index)
-                  ? BoxDecoration(color: Colors.blue)
-                  : decoration,
+              // decoration: gameSession.game.winKey.contains(widget.index)
+              //     ? BoxDecoration(color: Colors.blue)
+              //     : decoration,
               child: Center(
                 child: Text(
-                  gameSession.game.places[widget.index],
+                  game.places[widget.index],
                   style: TextStyle(
                     color: Colors.black,
                   ),

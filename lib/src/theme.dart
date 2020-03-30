@@ -9,10 +9,13 @@ class MyTheme {
       // primarySwatch: Colors.grey[900]
       primaryColor: Colors.white,
       textTheme: TextTheme(
-        body1: GoogleFonts.ubuntu(
-          color: Colors.white,
+        body1: TextStyle(
           fontSize: 30,
-        ),
+        )
+        // body1: GoogleFonts.ubuntu(
+        //   color: Colors.white,
+        //   fontSize: 30,
+        // ),
       ),
     );
   }

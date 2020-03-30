@@ -1,3 +1,5 @@
+import 'package:tic_tac_toe/src/sound_effect.dart';
+
 import 'score.dart';
 
 class Player {
@@ -5,25 +7,23 @@ class Player {
   String mark;
   List<int> movesPlayed;
   Score _score;
+  SoundEffect moveSoundEffect;
 
-  Player({this.name, this.mark}) {
+  Player({this.name, this.mark, this.moveSoundEffect}) {
     movesPlayed = [];
     _score = Score();
   }
 
   void updateWin() {
     _score.wins++;
-    _score.scoreType = ScoreType.win;
   }
 
   void updateLost() {
     _score.loss++;
-    _score.scoreType = ScoreType.loss;
   }
 
   void updateDraw() {
-    _score.draws++;
-    _score.scoreType = ScoreType.draw;
+    // Score.draws++;
   }
 
   // Later: Perhaps you may need to return a copy of this score.
