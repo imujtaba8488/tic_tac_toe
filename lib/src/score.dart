@@ -1,11 +1,7 @@
 class Score {
-  static int draws;
+  static int draws = 0;
   int wins = 0;
   int loss = 0;
 
-  Score() {
-    draws = 0;
-    wins = 0;
-    loss = 0;
-  }
+  Score({this.wins = 0, this.loss = 0});
 }

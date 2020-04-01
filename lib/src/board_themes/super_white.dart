@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
-import 'package:tic_tac_toe/src/single_touch_detector.dart';
 
 class SuperWhite extends StatefulWidget {
   final int index;
@@ -23,12 +22,10 @@ class _SuperWhiteState extends State<SuperWhite> {
       builder: (context, child, game) {
         gameModel = game;
 
-        return SingleTouchDectector(
+        return GestureDetector(
           onTap: () => gameModel.playMove(widget.index),
-          // enableFeedback: true,
-          // onTap: () => gameModel.playMove(widget.index),
-          // onTapDown: onTapDown,
-          // onTapUp: onTapUp,
+          onTapDown: onTapDown,
+          onTapUp: onTapUp,
           child: Container(
             margin: EdgeInsets.all(1.0),
             decoration: BoxDecoration(

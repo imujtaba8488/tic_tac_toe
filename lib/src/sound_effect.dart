@@ -32,7 +32,7 @@ class SoundEffectPlayer {
         break;
 
       case SoundEffect.error:
-        _audioPlayer.open('assets/audio/error.mp3'); // Todo
+        _audioPlayer.open('assets/audio/error.mp3');
         _audioPlayer.play();
         break;
 
@@ -46,7 +46,6 @@ class SoundEffectPlayer {
         break;
     }
   }
-
 
   void stop() {
     _audioPlayer.stop();

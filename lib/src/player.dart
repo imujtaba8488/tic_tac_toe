@@ -5,27 +5,42 @@ import 'score.dart';
 class Player {
   String name;
   String mark;
-  List<int> movesPlayed;
+  List<int> _movesPlayed;
   Score _score;
   SoundEffect moveSoundEffect;
 
-  Player({this.name, this.mark, this.moveSoundEffect}) {
-    movesPlayed = [];
-    _score = Score();
+  Player({
+    this.name = '',
+    this.mark = '',
+    this.moveSoundEffect = SoundEffect.userMove,
+  }) {
+    _movesPlayed = [];
+    _score = Score(wins: 0, loss: 0);
   }
 
-  void updateWin() {
+  /// Adds the given move [movePlayedAt] to the list of this player's moves.
+  void addMove(int movePlayedAt) {
+    _movesPlayed.add(movePlayedAt);
+  }
+
+  /// Resets all player moves back to 0.
+  void resetMoves() {
+    _movesPlayed.clear();
+  }
+
+  /// Updates score by a win.
+  void registerWin() {
     _score.wins++;
   }
 
-  void updateLost() {
+  /// Updates score by a loss.
+  void registerLoss() {
     _score.loss++;
   }
 
-  void updateDraw() {
-    // Score.draws++;
-  }
+  /// Returns a read-only copy of moves played by this player.
+  List<int> get movesPlayed => List<int>.unmodifiable(_movesPlayed);
 
-  // Later: Perhaps you may need to return a copy of this score.
-  Score get score => _score;
+  /// Returns a read-only copy of score of this player.
+  Score get score => Score(wins: _score.wins, loss: _score.loss);
 }
