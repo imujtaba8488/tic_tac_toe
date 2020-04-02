@@ -33,6 +33,8 @@ class GameModel extends Model {
   /// The time that the AI should take to play it's turn.
   Duration aiThinkingDelay;
 
+  bool enableLogs;
+
   GameModel(
     this.player1,
     this.player2,
@@ -41,18 +43,18 @@ class GameModel extends Model {
     this.onGameStatusChange,
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
+    this.enableLogs = false,
   }) {
     _initMovesToDefaultState();
 
     // No need to create, if disabled.
     if (!disableSoundEffects) _soundEffectPlayer = SoundEffectPlayer();
+
+    _gameStartUpLogs();
   }
 
   /// Initializes the moves to their default state.
-  void _initMovesToDefaultState() {
-    _moves = List(9);
-    _moves.fillRange(0, 9, '');
-  }
+  void _initMovesToDefaultState() => _moves = List.filled(9, '');
 
   /// Plays the move at the given index [at].
   void playMove(int at) {
@@ -221,6 +223,11 @@ class GameModel extends Model {
     notifyListeners();
   }
 
+  void _gameStartUpLogs() {
+    print('Sound Effects: ${disableSoundEffects ? 'off' : 'on'}');
+    print('AI Play: ${againstAI ? 'on' : 'off'}');
+  }
+
   // ****************** Getters and Setters  ****************** //
 
   /// Returns a read-only copy of moves.
@@ -235,7 +242,7 @@ class GameModel extends Model {
   /// Returns an error, if one occurs.
   Error get error => _error;
 
-  /// Returns the combination of indexes that resulted in a win. 
+  /// Returns the combination of indexes that resulted in a win.
   List<int> get winKey => List.unmodifiable(_winKey);
 }
 

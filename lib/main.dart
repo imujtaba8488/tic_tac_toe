@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
     Turn.player1,
     disableSoundEffects: true,
+    enableLogs: true,
   );
   // This widget is the root of your application.
   @override
