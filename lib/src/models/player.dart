@@ -1,6 +1,5 @@
-import 'package:tic_tac_toe/src/sound_effect.dart';
-
 import 'score.dart';
+import 'sound_effect.dart';
 
 class Player {
   String name;

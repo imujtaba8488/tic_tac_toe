@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
+
+import '../scoped_models/game_model.dart';
 
 class SuperWhiteBoard extends StatefulWidget {
-  SuperWhiteBoard();
+  // What to do when the game status changes.
+  final Function onGameStatusChange;
+
+  SuperWhiteBoard(this.onGameStatusChange);
 
   @override
   _SuperWhiteBoardState createState() => _SuperWhiteBoardState();
@@ -12,11 +16,17 @@ class SuperWhiteBoard extends StatefulWidget {
 class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
   double borderWidth = 2.0;
   BoxDecoration decoration;
+  GameModel gameModel;
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
-      builder: (context, child, gameModel) {
+      builder: (context, child, model) {
+        gameModel = model;
+
+        // Do layout everything first, then display an alert, if required.
+        WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
+
         return GridView.builder(
           itemCount: 9,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -25,32 +35,16 @@ class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () => gameModel.playMove(index),
-              onTapDown: onTapDown,
-              onTapUp: onTapUp,
+              // onTapDown: onTapDown,
+              // onTapUp: onTapUp,
               child: Container(
-                height: MediaQuery.of(context).size.height / 1.5,
-                child: Container(
-                  margin: EdgeInsets.all(1.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: borderWidth,
-                      color: Colors.grey[300],
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Container(
-                    decoration: gameModel.winKey.contains(index)
-                        ? BoxDecoration(color: Colors.blue)
-                        : decoration,
-                    child: Center(
-                      child: Text(
-                        gameModel.moves[index],
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                margin: EdgeInsets.all(1.0),
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: Center(
+                  child: Text(gameModel.moves[index]),
                 ),
               ),
             );

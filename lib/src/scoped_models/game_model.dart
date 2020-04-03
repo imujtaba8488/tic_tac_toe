@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/score.dart';
 
-import '../sound_effect.dart';
-import '../player.dart';
+import '../models/score.dart';
+import '../models/sound_effect.dart';
+import '../models/player.dart';
 
 typedef OnGameStatusChange = Function(
   StatusChange statusChange,
@@ -175,8 +175,6 @@ class GameModel extends Model {
 
   /// A very essential method, which describes and controls many factors that need updated or notified, when there is a change in game status.
   void _gameStatusChange() {
-    print('inside _gameStatusChange.');
-
     if (_gameStatus == _GameStatus.draw) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.draw);
       Score.draws++;
@@ -235,6 +233,9 @@ class GameModel extends Model {
     statusChange = StatusChange.none;
 
     _winKey.clear();
+
+    // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. Maybe look into this later. Review....
+    if(_turn == Turn.player2) _playAiTurn();
 
     notifyListeners();
   }
