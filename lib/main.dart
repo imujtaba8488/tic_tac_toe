@@ -1,47 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/game_board.dart';
-import 'package:tic_tac_toe/src/game_over.dart';
-import 'package:tic_tac_toe/src/player.dart';
-import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
-import 'package:tic_tac_toe/src/sound_effect.dart';
-import 'package:tic_tac_toe/src/theme.dart';
 
-import './src/game_board.dart';
+import './src/scoped_models/game_model.dart';
+import './src/player.dart';
+import './src/game_over.dart';
+import './src/boards/super_white_board.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(HomePage());
 
-class MyApp extends StatelessWidget {
-  final GameModel gameModel = GameModel(
-    Player(name: 'user', mark: 'X', moveSoundEffect: SoundEffect.userMove),
-    Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
-    Turn.player1,
-    disableSoundEffects: true,
-    enableLogs: true,
-  );
-  // This widget is the root of your application.
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  GameModel gameModel;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Tic Tac Toe',
-      theme: MyTheme().theme,
       home: ScopedModel(
-        model: gameModel,
-        child: GameBoard(),
+        model: gameModel = GameModel(
+          Player(name: 'user', mark: 'X'),
+          Player(name: 'ai', mark: '0'),
+          Turn.player1,
+          disableSoundEffects: true,
+        ),
+        child: Scaffold(
+          body: SuperWhiteBoard(),
+        ),
       ),
     );
   }
-}
 
-void showGameOver(
-  BuildContext context,
-  String message, {
-  Function onPressed,
-  String buttonText = 'Play Again',
-}) {
-  showDialog(
-    context: context,
-    child: GameOver(message, onPressed: onPressed, buttonText: buttonText),
-  );
+  void _onGameStatusChange(StatusChange statusChange, Function reset) {
+    print('calling onGameStatusChange....');
+
+    switch (statusChange) {
+      case StatusChange.draw:
+        _showGameOverDialog('Draw', reset);
+        break;
+
+      case StatusChange.player1_won:
+        _showGameOverDialog('${gameModel.player1.name} has won', reset);
+        break;
+
+      case StatusChange.player1_won:
+        _showGameOverDialog('${gameModel.player2.name} has won', reset);
+        break;
+
+      case StatusChange.error_next_move_unavailable:
+        _showGameOverDialog(
+          'error: move not valid.',
+          () {
+            Navigator.pop(context);
+          },
+          buttonText: 'OK',
+        );
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  void _showGameOverDialog(String message, Function reset,
+      {String buttonText}) {
+    print('show dialog');
+    showDialog(
+      context: context,
+      child: GameOver(
+        message,
+        onPressed: reset,
+      ),
+    );
+  }
 }

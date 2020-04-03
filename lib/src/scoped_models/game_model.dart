@@ -6,6 +6,11 @@ import 'package:tic_tac_toe/src/score.dart';
 import '../sound_effect.dart';
 import '../player.dart';
 
+typedef OnGameStatusChange = Function(
+  StatusChange statusChange,
+  Function reset,
+);
+
 class GameModel extends Model {
   /// Total number of moves available within the game.
   List<String> _moves;
@@ -20,12 +25,13 @@ class GameModel extends Model {
   /// The combination of indexes that resulted in a win.
   List<int> _winKey = [];
 
+  /// Whether to play against the AI or not.
   bool againstAI;
+
+  /// Whether to disable or enable the play sound effects.
   bool disableSoundEffects;
 
   SoundEffectPlayer _soundEffectPlayer;
-
-  Function onGameStatusChange;
 
   /// Whether the AI is taking it's time to think, before it plays it's turn.
   bool _isAiThinking = false;
@@ -35,20 +41,26 @@ class GameModel extends Model {
 
   bool enableLogs;
 
+  StatusChange statusChange;
+
+  OnGameStatusChange onGameStatusChange;
+
   GameModel(
     this.player1,
     this.player2,
     this._turn, {
     this.againstAI = true,
-    this.onGameStatusChange,
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
     this.enableLogs = false,
+    this.onGameStatusChange,
   }) {
     _initMovesToDefaultState();
 
     // No need to create, if disabled.
     if (!disableSoundEffects) _soundEffectPlayer = SoundEffectPlayer();
+
+    statusChange = StatusChange.none;
 
     _gameStartUpLogs();
   }
@@ -87,7 +99,7 @@ class GameModel extends Model {
     if (_playStatus != _PlayStatus.player1_won ||
         _playStatus != _PlayStatus.player2_won) _checkGameStatus();
 
-    // Update user move.
+    // Necessary. Notifies the listeners that a move has been played.
     notifyListeners();
 
     // Play AI's turn, if playing aganist the AI. Observe the three 'if' checks.
@@ -139,12 +151,14 @@ class GameModel extends Model {
       _moveStatus = _MoveStatus.next_move_available;
     } else {
       _moveStatus = _MoveStatus.next_move_unavailable;
+      _gameStatusChange();
     }
   }
 
   /// Flips the turn.
-  void _switchTurn() =>
-      _turn == Turn.player1 ? _turn = Turn.player2 : _turn = Turn.player1;
+  void _switchTurn() {
+    _turn == Turn.player1 ? _turn = Turn.player2 : _turn = Turn.player1;
+  }
 
   /// Returns a list of indexes of moves that are yet to be played.
   List<int> get movesRemaining {
@@ -161,32 +175,32 @@ class GameModel extends Model {
 
   /// A very essential method, which describes and controls many factors that need updated or notified, when there is a change in game status.
   void _gameStatusChange() {
-    // Remember, reset automatically notifies the listeners.
+    print('inside _gameStatusChange.');
 
     if (_gameStatus == _GameStatus.draw) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.draw);
       Score.draws++;
-      // onGameStatusChange('draws', onPressed: _reset);
-      print('*** Draw: ${Score.draws} ***');
-      _reset();
+      statusChange = StatusChange.draw;
+      notifyListeners();
+      // onGameStatusChange(statusChange, reset);
     } else if (_playStatus == _PlayStatus.player1_won) {
       player1.registerWin();
-
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.win);
-
-      print('${player1.name}, Score: ${player1.score.wins}');
-      _reset();
+      statusChange = StatusChange.player1_won;
+      notifyListeners();
+      // onGameStatusChange(statusChange, reset);
     } else if (_playStatus == _PlayStatus.player2_won) {
       player2.registerWin();
-
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.lost);
-
-      print('${player2.name}, Score: ${player2.score.wins}');
-      _reset();
+      statusChange = StatusChange.player2_won;
+      notifyListeners();
+      // onGameStatusChange(statusChange, reset);
     } else if (_moveStatus == _MoveStatus.next_move_unavailable) {
-      _error = Error.next_move_unavailable;
-
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.error);
+      statusChange = StatusChange.error_next_move_unavailable;
+      notifyListeners();
+      // onGameStatusChange(statusChange, reset);
+      print('error: move not available.');
     }
   }
 
@@ -208,7 +222,7 @@ class GameModel extends Model {
   }
 
   /// Resets the game to its original status.
-  void _reset() {
+  void reset() {
     _initMovesToDefaultState();
 
     player1.resetMoves();
@@ -217,6 +231,8 @@ class GameModel extends Model {
     _gameStatus = _GameStatus.moves_available;
     _moveStatus = _MoveStatus.next_move_available;
     _playStatus = _PlayStatus.active;
+
+    statusChange = StatusChange.none;
 
     _winKey.clear();
 
@@ -260,6 +276,14 @@ enum _MoveStatus { next_move_available, next_move_unavailable }
 
 /// Describes any error that has resulted, such as, if a move has been played and there is an attempt to play it again.
 enum Error { next_move_unavailable, none }
+
+enum StatusChange {
+  draw,
+  player1_won,
+  player2_won,
+  error_next_move_unavailable,
+  none,
+}
 
 /// Return -1, if win is not possible for [forMoves], else returns the index where the win is possible for [forMoves] within the grid.
 int _isWinPossible(List<int> forMoves, List<String> inMoves) {
