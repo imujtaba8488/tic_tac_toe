@@ -4,21 +4,27 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/game_model.dart';
 import 'board_theme.dart';
 
-class SuperWhiteBoard extends StatefulWidget {
+class Board extends StatefulWidget {
   // What to do when the game status changes.
   final Function onGameStatusChange;
   final BoardTheme theme;
 
-  SuperWhiteBoard(this.onGameStatusChange, {this.theme});
+  Board(this.onGameStatusChange, {this.theme});
 
   @override
-  _SuperWhiteBoardState createState() => _SuperWhiteBoardState();
+  _BoardState createState() => _BoardState();
 }
 
-class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
+class _BoardState extends State<Board> {
   double borderWidth = 2.0;
   BoxDecoration decoration;
   GameModel gameModel;
+
+  @override
+  void initState() {
+    decoration = widget.theme.decoration;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +48,10 @@ class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
               // onTapDown: onTapDown,
               // onTapUp: onTapUp,
               child: Container(
-                margin: EdgeInsets.all(1.0),
-                decoration: widget.theme.decoration,
+                width: MediaQuery.of(context).size.width / 3,
+                height: MediaQuery.of(context).size.height / 3,
+                margin: EdgeInsets.all(5.0),
+                decoration: decoration,
                 child: Center(
                   child: Text(
                     gameModel.moves[index],
@@ -59,20 +67,15 @@ class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
   }
 
   void onTapDown(TapDownDetails tapDownDetails) {
+    print('inside tap down');
     setState(() {
-      decoration = BoxDecoration(
-        border: Border.all(
-          width: 5,
-          color: Colors.grey.shade300,
-        ),
-        borderRadius: BorderRadius.circular(3.0),
-      );
+      decoration = NeomorphicConcave(widget.theme.color).noShadowDecoration;
     });
   }
 
   void onTapUp(TapUpDetails tapUpDetails) {
     setState(() {
-      decoration = null;
+      decoration = widget.theme.decoration;
     });
   }
 }

@@ -7,7 +7,7 @@ class MyTheme {
   MyTheme() {
     theme = ThemeData(
       // primarySwatch: Colors.grey[900]
-      primaryColor: Colors.white,
+      primaryColor: Colors.grey,
       textTheme: TextTheme(
         body1: TextStyle(
           fontSize: 30,

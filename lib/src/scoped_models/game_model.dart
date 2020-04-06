@@ -58,7 +58,8 @@ class GameModel extends Model {
     _initMovesToDefaultState();
 
     // No need to create, if disabled.
-    if (!disableSoundEffects) _soundEffectPlayer = SoundEffectPlayer();
+    // if (!disableSoundEffects) _soundEffectPlayer = SoundEffectPlayer();
+    _soundEffectPlayer = SoundEffectPlayer();
 
     statusChange = StatusChange.none;
 

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../boards/super_white_board.dart';
+import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
 import '../components/game_over.dart';
 import '../boards/board_theme.dart';
+import '../components/score_board.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,17 +21,46 @@ class _HomePageState extends State<HomePage> {
       builder: (context, child, model) {
         gameModel = model;
 
-        return Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(5.0),
-              height: MediaQuery.of(context).size.height / 1.5,
-              child: SuperWhiteBoard(
-                _onGameStatusChange,
-                theme: DarkTheme(),
-              ),
+        return Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[
+              Container(
+                margin: EdgeInsets.all(8.0),
+                decoration: NeomorphicGrey().decoration,
+                child: IconButton(
+                  icon: gameModel.disableSoundEffects
+                      ? Icon(Icons.volume_off)
+                      : Icon(Icons.volume_mute),
+                  onPressed: () {
+                    setState(() {
+                      gameModel.disableSoundEffects =
+                          !gameModel.disableSoundEffects;
+                    });
+                  },
+                ),
+              )
+            ],
+          ),
+          backgroundColor: Colors.grey,
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: ScoreBoard(),
+                // ),
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  child: Board(
+                    _onGameStatusChange,
+                    theme: NeomorphicGrey(),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
