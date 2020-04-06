@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/game_model.dart';
+import 'board_theme.dart';
 
 class SuperWhiteBoard extends StatefulWidget {
   // What to do when the game status changes.
   final Function onGameStatusChange;
+  final BoardTheme theme;
 
-  SuperWhiteBoard(this.onGameStatusChange);
+  SuperWhiteBoard(this.onGameStatusChange, {this.theme});
 
   @override
   _SuperWhiteBoardState createState() => _SuperWhiteBoardState();
@@ -34,17 +36,19 @@ class _SuperWhiteBoardState extends State<SuperWhiteBoard> {
           ),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              onTap: () => gameModel.playMove(index),
+              onTap: () {
+                gameModel.playMove(index);
+              },
               // onTapDown: onTapDown,
               // onTapUp: onTapUp,
               child: Container(
                 margin: EdgeInsets.all(1.0),
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
+                decoration: widget.theme.decoration,
                 child: Center(
-                  child: Text(gameModel.moves[index]),
+                  child: Text(
+                    gameModel.moves[index],
+                    style: widget.theme.textStyle,
+                  ),
                 ),
               ),
             );

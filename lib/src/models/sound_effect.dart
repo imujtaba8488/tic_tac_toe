@@ -47,6 +47,7 @@ class SoundEffectPlayer {
     }
   }
 
+  /// Stops the sound effect from playing.
   void stop() {
     _audioPlayer.stop();
   }

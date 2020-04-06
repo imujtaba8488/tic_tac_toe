@@ -4,6 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../boards/super_white_board.dart';
 import '../scoped_models/game_model.dart';
 import '../components/game_over.dart';
+import '../boards/board_theme.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,17 +13,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GameModel gameModel;
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, model) {
         gameModel = model;
+
         return Column(
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(5.0),
               height: MediaQuery.of(context).size.height / 1.5,
-              child: SuperWhiteBoard(_onGameStatusChange),
+              child: SuperWhiteBoard(
+                _onGameStatusChange,
+                theme: DarkTheme(),
+              ),
             ),
           ],
         );
@@ -30,6 +36,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Remember this is going to be called after the widget is completely rendered, hence, the underscore in the parenthesis. Probably learn what it is.
   void _onGameStatusChange(_) {
     switch (gameModel.statusChange) {
       case StatusChange.draw:
