@@ -5,7 +5,6 @@ import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
 import '../components/game_over.dart';
 import '../boards/board_theme.dart';
-import '../components/score_board.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -66,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// Remember this is going to be called after the widget is completely rendered, hence, the underscore in the parenthesis. Probably learn what it is.
+  /// This will be called after the widget has been completely rendered. Hence, the '_' in the parenthesis. // todo: Learn about underscore in paranthesis later on.
   void _onGameStatusChange(_) {
     switch (gameModel.statusChange) {
       case StatusChange.draw:

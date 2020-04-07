@@ -6,18 +6,12 @@ import '../models/score.dart';
 import '../models/sound_effect.dart';
 import '../models/player.dart';
 
-typedef OnGameStatusChange = Function(
-  StatusChange statusChange,
-  Function reset,
-);
-
 class GameModel extends Model {
   /// Total number of moves available within the game.
   List<String> _moves;
   _GameStatus _gameStatus = _GameStatus.moves_available;
   _MoveStatus _moveStatus = _MoveStatus.next_move_available;
   _PlayStatus _playStatus = _PlayStatus.active;
-  Error _error = Error.none;
 
   Player player1, player2;
   Turn _turn;
@@ -43,8 +37,6 @@ class GameModel extends Model {
 
   StatusChange statusChange;
 
-  OnGameStatusChange onGameStatusChange;
-
   GameModel(
     this.player1,
     this.player2,
@@ -53,17 +45,14 @@ class GameModel extends Model {
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
     this.enableLogs = false,
-    this.onGameStatusChange,
   }) {
     _initMovesToDefaultState();
 
-    // No need to create, if disabled.
-    // if (!disableSoundEffects) _soundEffectPlayer = SoundEffectPlayer();
     _soundEffectPlayer = SoundEffectPlayer();
 
     statusChange = StatusChange.none;
 
-    _gameStartUpLogs();
+    if (enableLogs) _gameStartUpLogs();
   }
 
   /// Initializes the moves to their default state.
@@ -131,7 +120,7 @@ class GameModel extends Model {
     }
   }
 
-  /// Checks if either of the players has won or the game is still on.
+  /// Checks if either of the players has won the game or if it is still on.
   void _checkPlayStatus() {
     if (_hasWon(player1.movesPlayed)) {
       _winKey = _winningCombination(player1.movesPlayed);
@@ -181,25 +170,20 @@ class GameModel extends Model {
       Score.draws++;
       statusChange = StatusChange.draw;
       notifyListeners();
-      // onGameStatusChange(statusChange, reset);
     } else if (_playStatus == _PlayStatus.player1_won) {
       player1.registerWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.win);
       statusChange = StatusChange.player1_won;
       notifyListeners();
-      // onGameStatusChange(statusChange, reset);
     } else if (_playStatus == _PlayStatus.player2_won) {
       player2.registerWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.lost);
       statusChange = StatusChange.player2_won;
       notifyListeners();
-      // onGameStatusChange(statusChange, reset);
     } else if (_moveStatus == _MoveStatus.next_move_unavailable) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.error);
       statusChange = StatusChange.error_next_move_unavailable;
       notifyListeners();
-      // onGameStatusChange(statusChange, reset);
-      print('error: move not available.');
     }
   }
 
@@ -236,7 +220,10 @@ class GameModel extends Model {
     _winKey.clear();
 
     // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. Maybe look into this later. Review....
-    if(_turn == Turn.player2) _playAiTurn();
+    if (_turn == Turn.player2) _playAiTurn();
+
+    // Stop any sound effect from playing. This does not disable the soundEffects, it only stops the one, if there is one currently playing.
+    if (!disableSoundEffects) _soundEffectPlayer.stop();
 
     notifyListeners();
   }
@@ -257,9 +244,6 @@ class GameModel extends Model {
   /// Returns the total number of game draws.
   int get draws => Score.draws;
 
-  /// Returns an error, if one occurs.
-  Error get error => _error;
-
   /// Returns the combination of indexes that resulted in a win.
   List<int> get winKey => List.unmodifiable(_winKey);
 }
@@ -275,9 +259,6 @@ enum _PlayStatus { player1_won, player2_won, active }
 
 /// Describes the moves status, i.e. whether a move at a given index is available to be played or not.
 enum _MoveStatus { next_move_available, next_move_unavailable }
-
-/// Describes any error that has resulted, such as, if a move has been played and there is an attempt to play it again.
-enum Error { next_move_unavailable, none }
 
 enum StatusChange {
   draw,

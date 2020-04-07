@@ -5,8 +5,10 @@ import '../scoped_models/game_model.dart';
 import 'board_theme.dart';
 
 class Board extends StatefulWidget {
-  // What to do when the game status changes.
+  /// Action to be taken when the gameStatus changes.
   final Function onGameStatusChange;
+
+  /// The theme which is to be applied to the current board.
   final BoardTheme theme;
 
   Board(this.onGameStatusChange, {this.theme});
@@ -32,7 +34,7 @@ class _BoardState extends State<Board> {
       builder: (context, child, model) {
         gameModel = model;
 
-        // Do layout everything first, then display an alert, if required.
+        // Alert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
         WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
 
         return GridView.builder(
