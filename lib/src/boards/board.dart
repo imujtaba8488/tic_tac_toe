@@ -14,22 +14,11 @@ class Board extends StatefulWidget {
 }
 
 class _BoardState extends State<Board> {
-  double borderWidth = 2.0;
-  BoxDecoration decoration;
-  GameModel gameModel;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
-      builder: (context, child, model) {
-        gameModel = model;
-
-        // Alert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
+      builder: (context, child, gameModel) {
+        // GameOverAlert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
         WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
 
         return GridView.builder(
@@ -42,11 +31,7 @@ class _BoardState extends State<Board> {
               onTap: () {
                 gameModel.playMove(index);
               },
-              // onTapDown: onTapDown,
-              // onTapUp: onTapUp,
               child: Container(
-                width: MediaQuery.of(context).size.width / 3,
-                height: MediaQuery.of(context).size.height / 3,
                 margin: EdgeInsets.all(5.0),
                 decoration: gameModel.theme.decoration,
                 child: Center(
@@ -62,17 +47,4 @@ class _BoardState extends State<Board> {
       },
     );
   }
-
-  // void onTapDown(TapDownDetails tapDownDetails) {
-  //   print('inside tap down');
-  //   setState(() {
-  //     decoration = NeomorphicConcave(widget.theme.color).noShadowDecoration;
-  //   });
-  // }
-
-  // void onTapUp(TapUpDetails tapUpDetails) {
-  //   setState(() {
-  //     decoration = widget.theme.boardDecoration;
-  //   });
-  // }
 }

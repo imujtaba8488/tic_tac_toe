@@ -19,7 +19,7 @@ class _GameOverDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ignoring the context from the build method.
+    // Ignoring the context from the build method. // Todo: Why?
     GameModel gameModel = ScopedModel.of(_context);
 
     return AlertDialog(
