@@ -4,7 +4,13 @@ import 'package:scoped_model/scoped_model.dart';
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
 import '../components/game_over.dart';
-import '../boards/board_theme.dart';
+import '../models/app_theme.dart';
+
+enum ThemeSelected {
+  grey,
+  deep_orange,
+  deep_purple,
+}
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GameModel gameModel;
+  ThemeSelected selectedTheme = ThemeSelected.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +29,25 @@ class _HomePageState extends State<HomePage> {
 
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: gameModel.theme.backgroundColor,
             actions: <Widget>[
               Container(
                 margin: EdgeInsets.all(8.0),
-                decoration: NeomorphicGrey().decoration,
+                decoration: gameModel.theme.decoration,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    colorChooser(Colors.grey, ThemeSelected.grey, gameModel),
+                    colorChooser(Colors.deepOrange, ThemeSelected.deep_orange,
+                        gameModel),
+                    colorChooser(Colors.deepPurple, ThemeSelected.deep_purple,
+                        gameModel),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(8.0),
+                decoration: gameModel.theme.decoration,
                 child: IconButton(
                   icon: gameModel.disableSoundEffects
                       ? Icon(Icons.volume_off)
@@ -37,10 +59,10 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-              )
+              ),
             ],
           ),
-          backgroundColor: Colors.grey,
+          backgroundColor: gameModel.theme.backgroundColor,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,7 +76,6 @@ class _HomePageState extends State<HomePage> {
                   height: MediaQuery.of(context).size.height / 1.5,
                   child: Board(
                     _onGameStatusChange,
-                    theme: NeomorphicGrey(),
                   ),
                 ),
               ],
@@ -80,12 +101,51 @@ class _HomePageState extends State<HomePage> {
         showGameOverDialog(context, gameModel.statusChange);
         break;
 
-      case StatusChange.error_next_move_unavailable:
-        showGameOverDialog(context, gameModel.statusChange);
-        break;
+      // case StatusChange.error_next_move_unavailable:
+      //   showGameOverDialog(context, gameModel.statusChange);
+      //   break;
 
       default:
         break;
     }
+  }
+
+  Widget colorChooser(
+    Color color,
+    ThemeSelected themeSelected,
+    GameModel gameModel,
+  ) {
+    return InkWell(
+      child: Container(
+        margin: EdgeInsets.all(5),
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+          border: selectedTheme == themeSelected
+              ? Border.all(color: Colors.white)
+              : null,
+        ),
+      ),
+      onTap: () {
+        if (themeSelected == ThemeSelected.deep_orange) {
+          gameModel.theme = Neomorphic(color: Colors.deepOrange);
+          setState(() {
+            selectedTheme = themeSelected;
+          });
+        } else if (themeSelected == ThemeSelected.deep_purple) {
+          gameModel.theme = Neomorphic(color: Colors.blue[900]);
+          setState(() {
+            selectedTheme = themeSelected;
+          });
+        } else {
+          gameModel.theme = Neomorphic(color: Colors.grey);
+          setState(() {
+            selectedTheme = themeSelected;
+          });
+        }
+      },
+    );
   }
 }

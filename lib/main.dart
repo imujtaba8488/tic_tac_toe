@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import './src/scoped_models/game_model.dart';
 import './src/models/player.dart';
 import './src/pages/home_page.dart';
-import './src/models/theme.dart';
+import './src/models/app_theme.dart';
 
 void main() => runApp(TicTacToe());
 
@@ -17,12 +17,10 @@ class TicTacToe extends StatelessWidget {
         Player(name: 'ai', mark: '0'),
         Turn.player1,
         disableSoundEffects: true,
+        theme: Neomorphic(),
       ),
       child: MaterialApp(
-        theme: MyTheme().theme,
-        home: Scaffold(
-          body: HomePage(),
-        ),
+        home: HomePage(),
       ),
     );
   }

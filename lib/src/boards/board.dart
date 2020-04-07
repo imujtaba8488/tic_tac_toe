@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/game_model.dart';
-import 'board_theme.dart';
 
 class Board extends StatefulWidget {
   /// Action to be taken when the gameStatus changes.
   final Function onGameStatusChange;
 
-  /// The theme which is to be applied to the current board.
-  final BoardTheme theme;
-
-  Board(this.onGameStatusChange, {this.theme});
+  Board(this.onGameStatusChange);
 
   @override
   _BoardState createState() => _BoardState();
@@ -24,7 +20,6 @@ class _BoardState extends State<Board> {
 
   @override
   void initState() {
-    decoration = widget.theme.decoration;
     super.initState();
   }
 
@@ -53,11 +48,11 @@ class _BoardState extends State<Board> {
                 width: MediaQuery.of(context).size.width / 3,
                 height: MediaQuery.of(context).size.height / 3,
                 margin: EdgeInsets.all(5.0),
-                decoration: decoration,
+                decoration: gameModel.theme.decoration,
                 child: Center(
                   child: Text(
                     gameModel.moves[index],
-                    style: widget.theme.textStyle,
+                    style: gameModel.theme.textStyle,
                   ),
                 ),
               ),
@@ -68,16 +63,16 @@ class _BoardState extends State<Board> {
     );
   }
 
-  void onTapDown(TapDownDetails tapDownDetails) {
-    print('inside tap down');
-    setState(() {
-      decoration = NeomorphicConcave(widget.theme.color).noShadowDecoration;
-    });
-  }
+  // void onTapDown(TapDownDetails tapDownDetails) {
+  //   print('inside tap down');
+  //   setState(() {
+  //     decoration = NeomorphicConcave(widget.theme.color).noShadowDecoration;
+  //   });
+  // }
 
-  void onTapUp(TapUpDetails tapUpDetails) {
-    setState(() {
-      decoration = widget.theme.decoration;
-    });
-  }
+  // void onTapUp(TapUpDetails tapUpDetails) {
+  //   setState(() {
+  //     decoration = widget.theme.boardDecoration;
+  //   });
+  // }
 }

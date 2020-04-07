@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/src/boards/board_theme.dart';
 
 class ScoreCard extends StatelessWidget {
   final String label;
@@ -13,7 +12,7 @@ class ScoreCard extends StatelessWidget {
       builder: (context, constraints) {
         return Container(
           padding: EdgeInsets.all(15),
-          decoration: NeomorphicConcave(Colors.orange).decoration,
+          // decoration: NeomorphicConcave(Colors.orange).decoration,
           // decoration: BoxDecoration(
           //   color: Colors.grey[500],
           //   gradient: LinearGradient(

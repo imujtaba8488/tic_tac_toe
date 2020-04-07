@@ -23,6 +23,7 @@ class _GameOverDialog extends StatelessWidget {
     GameModel gameModel = ScopedModel.of(_context);
 
     return AlertDialog(
+      backgroundColor: gameModel.theme.backgroundColor,
       content: ListTile(
         title: Text('Game Over'),
         subtitle: _getText(gameModel),

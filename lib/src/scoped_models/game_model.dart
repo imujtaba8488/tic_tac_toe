@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../models/score.dart';
 import '../models/sound_effect.dart';
 import '../models/player.dart';
+import '../models/app_theme.dart';
 
 class GameModel extends Model {
   /// Total number of moves available within the game.
@@ -33,9 +35,14 @@ class GameModel extends Model {
   /// The time that the AI should take to play it's turn.
   Duration aiThinkingDelay;
 
+  /// Whether to show or hide the logs.
   bool enableLogs;
 
+  /// Returns the current status of the game. For example, during the course of time, either of players may won, game may result in a draw, an error might occur, etc.
   StatusChange statusChange;
+
+  /// The theme to be used throughout the application.
+  AppTheme _theme;
 
   GameModel(
     this.player1,
@@ -45,7 +52,8 @@ class GameModel extends Model {
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
     this.enableLogs = false,
-  }) {
+    @required AppTheme theme,
+  }) : _theme = theme {
     _initMovesToDefaultState();
 
     _soundEffectPlayer = SoundEffectPlayer();
@@ -198,13 +206,13 @@ class GameModel extends Model {
     }
   }
 
-  /// Plays a random move from the remaining moves.
+  /// Plays a random move from the [movesRemaining].
   void _playRandomMove() {
     movesRemaining.shuffle();
     playMove(movesRemaining[Random().nextInt(movesRemaining.length)]);
   }
 
-  /// Resets the game to its original status.
+  /// Resets the game.
   void reset() {
     _initMovesToDefaultState();
 
@@ -222,7 +230,7 @@ class GameModel extends Model {
     // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. Maybe look into this later. Review....
     if (_turn == Turn.player2) _playAiTurn();
 
-    // Stop any sound effect from playing. This does not disable the soundEffects, it only stops the one, if there is one currently playing.
+    // Stop any SoundEffect from playing. This does not disable SoundEffects, it only stops the current one from playing.
     if (!disableSoundEffects) _soundEffectPlayer.stop();
 
     notifyListeners();
@@ -246,6 +254,14 @@ class GameModel extends Model {
 
   /// Returns the combination of indexes that resulted in a win.
   List<int> get winKey => List.unmodifiable(_winKey);
+
+  /// Customized setter for setting the theme, which also triggers the notifyListeners, so that the theme may be updated wherever it being used.
+  set theme(AppTheme theme) {
+    _theme = theme;
+    notifyListeners();
+  }
+
+  AppTheme get theme => _theme;
 }
 
 /// Describes who's turn it is to play.
