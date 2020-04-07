@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../models/score.dart';
-import '../models/sound_effect.dart';
+import '../models/sound_effect_player.dart';
 import '../models/player.dart';
 import '../models/app_theme.dart';
 

@@ -21,6 +21,7 @@ class _BoardState extends State<Board> {
         // GameOverAlert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
         WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
 
+        // Creates a 3x3 grid.
         return GridView.builder(
           itemCount: 9,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

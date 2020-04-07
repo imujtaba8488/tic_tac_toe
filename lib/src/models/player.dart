@@ -1,5 +1,5 @@
 import 'score.dart';
-import 'sound_effect.dart';
+import 'sound_effect_player.dart';
 
 class Player {
   String name;
