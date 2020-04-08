@@ -46,19 +46,22 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(8.0),
-                decoration: gameModel.theme.decoration,
-                child: IconButton(
-                  icon: gameModel.disableSoundEffects
-                      ? Icon(Icons.volume_off)
-                      : Icon(Icons.volume_mute),
-                  onPressed: () {
-                    setState(() {
-                      gameModel.disableSoundEffects =
-                          !gameModel.disableSoundEffects;
-                    });
-                  },
+              Tooltip(
+                message: gameModel.disableSoundEffects ? 'Unmute' : 'Mute',
+                child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: gameModel.theme.decoration,
+                  child: IconButton(
+                    icon: gameModel.disableSoundEffects
+                        ? Icon(Icons.volume_off)
+                        : Icon(Icons.volume_mute),
+                    onPressed: () {
+                      setState(() {
+                        gameModel.disableSoundEffects =
+                            !gameModel.disableSoundEffects;
+                      });
+                    },
+                  ),
                 ),
               ),
             ],
