@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:tic_tac_toe/src/components/score_board.dart';
 
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
@@ -67,12 +68,12 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: ScoreBoard(),
-                // ),
                 Container(
-                  padding: EdgeInsets.all(5.0),
+                  padding: EdgeInsets.all(15.0),
+                  child: ScoreBoard(),
+                ),
+                Container(
+                  padding: EdgeInsets.all(15.0),
                   height: MediaQuery.of(context).size.height / 1.5,
                   child: Board(
                     _onGameStatusChange,
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Selects the theme based on the given properties. // ? Should you extract this into its own file as a separate widget? 
+  /// Selects the theme based on the given properties. // ? Should you extract this into its own file as a separate widget?
   Widget _themeSelector(
     Color color,
     ThemeSelected themeSelected,

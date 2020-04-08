@@ -25,12 +25,15 @@ class _GameOverDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: gameModel.theme.backgroundColor,
       content: ListTile(
-        title: Text('Game Over'),
-        subtitle: _getText(gameModel),
+        title: Text('Game Over', style: gameModel.theme.gameOverTextStyle,),
+        subtitle: _getText(gameModel, gameModel.theme.resultTextStyle),
       ),
       actions: <Widget>[
-        RaisedButton(
-          child: Text('Play Again?'),
+        FlatButton(
+          child: Text(
+            'Play Again?',
+            style: gameModel.theme.buttonTextStyle,
+          ),
           onPressed: () {
             gameModel.reset();
             Navigator.pop(context);
@@ -40,22 +43,22 @@ class _GameOverDialog extends StatelessWidget {
     );
   }
 
-  Widget _getText(GameModel gameModel) {
+  Widget _getText(GameModel gameModel, TextStyle textStyle) {
     switch (_statusChange) {
       case StatusChange.draw:
-        return Text('Draw.');
+        return Text('Draw.', style: textStyle,);
 
       case StatusChange.player1_won:
-        return Text('${gameModel.player1.name} has won.');
+        return Text('${gameModel.player1.name} has won.', style: textStyle,);
 
       case StatusChange.player2_won:
-        return Text('${gameModel.player2.name} has won.');
+        return Text('${gameModel.player2.name} has won.', style: textStyle,);
 
       case StatusChange.error_next_move_unavailable:
-        return Text('error: Move not allowed.');
+        return Text('error: Move not allowed.', style: textStyle,);
 
       default:
-        return Text('');  // Temp...
+        return Text(''); // Temp...
     }
   }
 }

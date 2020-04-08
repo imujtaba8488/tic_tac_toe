@@ -38,7 +38,7 @@ class _BoardState extends State<Board> {
                 child: Center(
                   child: Text(
                     gameModel.moves[index],
-                    style: gameModel.theme.textStyle,
+                    style: gameModel.theme.moveTextStyleBlackHansSans,
                   ),
                 ),
               ),

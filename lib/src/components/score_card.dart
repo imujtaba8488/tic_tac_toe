@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
+
+import 'package:augmentory/augmentory.dart';
 
 class ScoreCard extends StatelessWidget {
   final String label;
@@ -8,41 +12,43 @@ class ScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+    return ScopedModelDescendant<GameModel>(
+      builder: (context, child, gameModel) {
         return Container(
-          padding: EdgeInsets.all(15),
-          // decoration: NeomorphicConcave(Colors.orange).decoration,
-          // decoration: BoxDecoration(
-          //   color: Colors.grey[500],
-          //   gradient: LinearGradient(
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //       colors: [
-          //         Colors.grey[300],
-          //         Colors.grey[600],
-          //       ]),
-          //   boxShadow: [
-          //     BoxShadow(
-          //       color: Colors.grey.shade100,
-          //       offset: Offset(-1, -1),
-          //       blurRadius: 2,
-          //     ),
-          //     BoxShadow(
-          //       color: Colors.grey.shade900,
-          //       offset: Offset(1, 1),
-          //       blurRadius: 2,
-          //     )
-          //   ],
-          //   borderRadius: BorderRadius.circular(5),
-          // ),
+          decoration: gameModel.theme.decoration,
+          padding: EdgeInsets.all(5),
           child: Column(
             children: <Widget>[
-              Text(
-                label,
-                style: TextStyle(fontSize: 16),
+              // Text(
+              //   label,
+              //   style: gameModel.theme.textStyle,
+              // ),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: gameModel.theme.decoration,
+                child: Tooltip(
+                  message: label.containsIgnoreCase('ai')
+                      ? 'AI Score'
+                      : label.containsIgnoreCase('draws')
+                          ? 'Draws'
+                          : 'Your Score',
+                  child: Icon(
+                    label.contains('user')
+                        ? Icons.person
+                        : label.contains('Draws')
+                            ? Icons.close
+                            : Icons.computer,
+                    color: gameModel.theme.iconColor,
+                  ),
+                ),
               ),
-              Text(score.toString()),
+              Padding(
+                padding: EdgeInsets.all(5),
+              ),
+              Text(
+                score.toString(),
+                style: gameModel.theme.scoreTextStyle,
+              ),
             ],
           ),
         );

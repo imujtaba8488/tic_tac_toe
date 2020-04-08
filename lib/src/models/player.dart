@@ -44,5 +44,6 @@ class Player {
   List<int> get movesPlayed => List<int>.unmodifiable(_movesPlayed);
 
   /// Returns a read-only copy of score of this player.
-  Score get currentScore => Score(wins: _currentScore.wins, loss: _currentScore.loss);
+  Score get currentScore =>
+      Score(wins: _currentScore.wins, loss: _currentScore.loss);
 }
