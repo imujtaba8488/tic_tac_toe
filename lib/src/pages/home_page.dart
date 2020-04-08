@@ -118,16 +118,23 @@ class _HomePageState extends State<HomePage> {
     GameModel gameModel,
   ) {
     return InkWell(
-      child: Container(
-        margin: EdgeInsets.all(5),
-        width: 20,
-        height: 20,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-          border: selectedTheme == themeSelected
-              ? Border.all(color: Colors.white)
-              : null,
+      child: Tooltip(
+        message: selectedTheme == ThemeSelected.grey
+            ? 'Neomorphic Grey'
+            : selectedTheme == ThemeSelected.deep_orange
+                ? 'Neomorphic Deep Orange'
+                : 'Neomorphic Deep Purple',
+        child: Container(
+          margin: EdgeInsets.all(5),
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+            border: selectedTheme == themeSelected
+                ? Border.all(color: Colors.white)
+                : null,
+          ),
         ),
       ),
       onTap: () {
