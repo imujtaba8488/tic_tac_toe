@@ -37,10 +37,10 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    colorChooser(Colors.grey, ThemeSelected.grey, gameModel),
-                    colorChooser(Colors.deepOrange, ThemeSelected.deep_orange,
+                    _themeSelector(Colors.grey, ThemeSelected.grey, gameModel),
+                    _themeSelector(Colors.deepOrange, ThemeSelected.deep_orange,
                         gameModel),
-                    colorChooser(Colors.deepPurple, ThemeSelected.deep_purple,
+                    _themeSelector(Colors.deepPurple, ThemeSelected.deep_purple,
                         gameModel),
                   ],
                 ),
@@ -110,7 +110,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget colorChooser(
+  /// Selects the theme based on the given properties. // ? Should you extract this into its own file as a separate widget? 
+  Widget _themeSelector(
     Color color,
     ThemeSelected themeSelected,
     GameModel gameModel,

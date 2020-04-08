@@ -5,7 +5,7 @@ class Player {
   String name;
   String mark;
   List<int> _movesPlayed;
-  Score _score;
+  Score _currentScore, _lifeTimeScore;
   SoundEffect moveSoundEffect;
 
   Player({
@@ -14,7 +14,8 @@ class Player {
     this.moveSoundEffect = SoundEffect.userMove,
   }) {
     _movesPlayed = [];
-    _score = Score(wins: 0, loss: 0);
+    _currentScore = Score(wins: 0, loss: 0);
+    _lifeTimeScore = Score();
   }
 
   /// Adds the given move [movePlayedAt] to the list of this player's moves.
@@ -29,17 +30,19 @@ class Player {
 
   /// Updates score by a win.
   void registerWin() {
-    _score.wins++;
+    _currentScore.wins++;
+    _lifeTimeScore.wins++;
   }
 
   /// Updates score by a loss.
   void registerLoss() {
-    _score.loss++;
+    _currentScore.loss++;
+    _lifeTimeScore.loss++;
   }
 
   /// Returns a read-only copy of moves played by this player.
   List<int> get movesPlayed => List<int>.unmodifiable(_movesPlayed);
 
   /// Returns a read-only copy of score of this player.
-  Score get score => Score(wins: _score.wins, loss: _score.loss);
+  Score get currentScore => Score(wins: _currentScore.wins, loss: _currentScore.loss);
 }
