@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/components/score_board.dart';
 
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
 import '../components/game_over.dart';
 import '../models/app_theme.dart';
+import '../components/score_board.dart';
+import 'stats.dart';
 
 /// Describes the themes that are available for the app.
 enum Themes {
@@ -33,6 +34,22 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             backgroundColor: gameModel.theme.backgroundColor,
             actions: <Widget>[
+              Tooltip(
+                message: 'Statistics',
+                child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: gameModel.theme.decoration,
+                  child: IconButton(
+                    icon: Icon(Icons.data_usage),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return Stats();
+                      }),
+                    ),
+                  ),
+                ),
+              ),
               Container(
                 margin: EdgeInsets.all(8.0),
                 decoration: gameModel.theme.decoration,

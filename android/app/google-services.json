@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "930404164000",
+    "firebase_url": "https://tictactoe8488.firebaseio.com",
+    "project_id": "tictactoe8488",
+    "storage_bucket": "tictactoe8488.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930404164000:android:36782668f54475a86284c5",
+        "android_client_info": {
+          "package_name": "com.imujtaba.tic_tac_toe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930404164000-un3e5r95lspv4p7lel34djhms9k8g2sm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.imujtaba.tic_tac_toe",
+            "certificate_hash": "f316619e4b40e0b5f0f5038ecffece37e1887282"
+          }
+        },
+        {
+          "client_id": "930404164000-s3tk8ksgc0o9q90i3k2mdjo7vi4un6e5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcSuHkPm1sTp6zrdOx4KbCdm5sM3cyXc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930404164000-s3tk8ksgc0o9q90i3k2mdjo7vi4un6e5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

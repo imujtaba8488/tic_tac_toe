@@ -7,6 +7,7 @@ import '../models/score.dart';
 import '../models/sound_effect_player.dart';
 import '../models/player.dart';
 import '../models/app_theme.dart';
+import '../models/cloud.dart';
 
 class GameModel extends Model {
   /// Total number of moves available within the game.
@@ -182,11 +183,19 @@ class GameModel extends Model {
       player1.registerWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.win);
       statusChange = StatusChange.player1_won;
+
+      //Cloud needs reviewing, hence, the temp flag.
+      Cloud().sync(true); // !temp
+
       notifyListeners();
     } else if (_playStatus == _PlayStatus.player2_won) {
       player2.registerWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.lost);
       statusChange = StatusChange.player2_won;
+
+      // Cloud needs reviewing, hence, the temp flag.
+      Cloud().sync(false); // !temp
+
       notifyListeners();
     } else if (_moveStatus == _MoveStatus.next_move_unavailable) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.error);

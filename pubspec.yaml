@@ -30,6 +30,7 @@ dependencies:
     path: '../augmentory'
   permission: ^0.1.7
   scoped_model: ^1.0.1
+  cloud_firestore: 
 
 
 dev_dependencies:
