@@ -105,7 +105,7 @@ class GameModel extends Model {
     if (againstAI) if (_turn == Turn.player2) if (movesRemaining.length > 0)
       _playAiTurn();
 
-    // Observe: How does the AI know that it has to play first, in case the user wins or user causes the draw? Since, in both the cases, it is the user who plays (last / finishes), and after each user play, if it's AI's turn, it is played automatically.
+    // Observe: How does the AI know that it has to play first, in case the user wins or user causes the draw? Since, in both the cases, it is the user who plays (last / finishes), and after each user play, if it's AI's turn, it is played automatically. *** Also look at the reset() method for this explanation ***
   }
 
   /// Plays the AI turn.
