@@ -13,10 +13,9 @@ class TicTacToe extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModel(
       model: GameModel(
-        Player(name: 'user', mark: 'X'),
-        Player(name: 'ai', mark: '0'),
+        Player(name: 'You', mark: 'X'),
+        Player(name: 'AI', mark: '0'),
         Turn.player1,
-        disableSoundEffects: true,
         theme: Neomorphic(),
       ),
       child: MaterialApp(

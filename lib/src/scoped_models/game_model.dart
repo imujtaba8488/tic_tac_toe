@@ -42,7 +42,7 @@ class GameModel extends Model {
   /// Returns the current status of the game. For example, during the course of time, either of players may won, game may result in a draw, an error might occur, etc.
   StatusChange statusChange;
 
-  /// The theme to be used throughout the application.
+  /// The theme to be used throughout the app.
   AppTheme _theme;
 
   GameModel(
@@ -236,7 +236,8 @@ class GameModel extends Model {
 
     _winKey.clear();
 
-    // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. Maybe look into this later. Review....
+    // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. 
+    // ! Maybe look into this later. Review...
     if (_turn == Turn.player2) _playAiTurn();
 
     // Stop any SoundEffect from playing. This does not disable SoundEffects, it only stops the current one from playing.
