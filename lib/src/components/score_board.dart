@@ -16,9 +16,13 @@ class ScoreBoard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               ScoreCard(
-                  gameModel.player1.name, gameModel.player1.currentScore.wins),
+                gameModel.player1.name,
+                gameModel.player1.currentScore.wins,
+              ),
               ScoreCard(
-                  gameModel.player2.name, gameModel.player2.currentScore.wins),
+                gameModel.player2.name,
+                gameModel.player2.currentScore.wins,
+              ),
               ScoreCard('Draws', gameModel.draws),
             ],
           ),

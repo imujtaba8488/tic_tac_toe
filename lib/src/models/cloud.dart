@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// todo: Perhaps rename this to CloudSync.
 class Cloud {
   final Firestore firestore = Firestore.instance;
 

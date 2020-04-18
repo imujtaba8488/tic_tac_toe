@@ -236,7 +236,7 @@ class GameModel extends Model {
 
     _winKey.clear();
 
-    // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far. 
+    // If reset is called within this class, the the following statement is not required. However, if called from outside of this class, the following statement is necessary. At least, that is what I have understood so far.
     // ! Maybe look into this later. Review...
     if (_turn == Turn.player2) _playAiTurn();
 
@@ -262,7 +262,7 @@ class GameModel extends Model {
   /// Returns the total number of game draws.
   int get draws => Score.draws;
 
-  /// Returns the combination of indexes that resulted in a win.
+  /// Returns an unmodifiable list containing indexes which resulted in a win.
   List<int> get winKey => List.unmodifiable(_winKey);
 
   /// Customized setter for setting the theme, which also triggers the notifyListeners, so that the theme may be updated wherever it being used.
