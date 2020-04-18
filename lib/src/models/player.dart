@@ -2,10 +2,22 @@ import 'score.dart';
 import 'sound_effect_player.dart';
 
 class Player {
+  /// Name of the player.
   String name;
+
+  /// The mark assigned to the player.
   String mark;
+
+  /// The total number of moves played by this player.
   List<int> _movesPlayed;
-  Score _currentScore, _lifeTimeScore;
+
+  /// The current game score of the player.
+  Score _currentScore;
+
+  /// The lifetime score of the player for all the games.
+  Score _lifeTimeScore;
+
+  /// The move sound-effect assigned to this player.
   SoundEffect moveSoundEffect;
 
   Player({
@@ -29,13 +41,13 @@ class Player {
   }
 
   /// Updates score by a win.
-  void registerWin() {
+  void registerAWin() {
     _currentScore.wins++;
     _lifeTimeScore.wins++;
   }
 
   /// Updates score by a loss.
-  void registerLoss() {
+  void registerALoss() {
     _currentScore.loss++;
     _lifeTimeScore.loss++;
   }

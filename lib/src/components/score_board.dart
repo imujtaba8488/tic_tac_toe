@@ -10,7 +10,6 @@ class ScoreBoard extends StatelessWidget {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Container(
-          // decoration: gameModel.theme.decoration,
           padding: EdgeInsets.all(5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
