@@ -31,6 +31,9 @@ dependencies:
   permission: ^0.1.7
   scoped_model: ^1.0.1
   cloud_firestore: 
+  google_sign_in:
+  firebase_auth:
+
 
 
 dev_dependencies:

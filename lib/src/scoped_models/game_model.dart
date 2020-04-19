@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../models/score.dart';
-import '../models/sound_effect_player.dart';
-import '../models/player.dart';
 import '../models/app_theme.dart';
 import '../models/cloud.dart';
+import '../models/player.dart';
+import '../models/score.dart';
+import '../models/sound_effect_player.dart';
 
 class GameModel extends Model {
   /// Total number of moves available within the game.
@@ -249,6 +250,18 @@ class GameModel extends Model {
   void _gameStartUpLogs() {
     print('Sound Effects: ${disableSoundEffects ? 'off' : 'on'}');
     print('AI Play: ${againstAI ? 'on' : 'off'}');
+  }
+
+  Future<GoogleSignInAccount> login() async {
+    GoogleSignInAccount googleSignInAccount;
+
+    GoogleSignIn googleSignIn = GoogleSignIn();
+
+    await googleSignIn.signIn().then((value) {
+      googleSignInAccount = value;
+    });
+
+    return googleSignInAccount;
   }
 
   // ****************** Getters and Setters  ****************** //

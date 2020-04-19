@@ -4,11 +4,13 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/game_model.dart';
 
 void showGameOverDialog(BuildContext context, StatusChange statusChange) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    child: _GameOverDialog(context, statusChange),
-  );
+  Future.delayed(Duration(seconds: 2), () {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      child: _GameOverDialog(context, statusChange),
+    );
+  });
 }
 
 class _GameOverDialog extends StatelessWidget {
@@ -25,7 +27,10 @@ class _GameOverDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: gameModel.theme.backgroundColor,
       content: ListTile(
-        title: Text('Game Over', style: gameModel.theme.gameOverTextStyle,),
+        title: Text(
+          'Game Over',
+          style: gameModel.theme.gameOverTextStyle,
+        ),
         subtitle: _getText(gameModel, gameModel.theme.resultTextStyle),
       ),
       actions: <Widget>[
@@ -46,16 +51,28 @@ class _GameOverDialog extends StatelessWidget {
   Widget _getText(GameModel gameModel, TextStyle textStyle) {
     switch (_statusChange) {
       case StatusChange.draw:
-        return Text('Draw.', style: textStyle,);
+        return Text(
+          'Draw.',
+          style: textStyle,
+        );
 
       case StatusChange.player1_won:
-        return Text('${gameModel.player1.name} has won.', style: textStyle,);
+        return Text(
+          '${gameModel.player1.name} has won.',
+          style: textStyle,
+        );
 
       case StatusChange.player2_won:
-        return Text('${gameModel.player2.name} has won.', style: textStyle,);
+        return Text(
+          '${gameModel.player2.name} has won.',
+          style: textStyle,
+        );
 
       case StatusChange.error_next_move_unavailable:
-        return Text('error: Move not allowed.', style: textStyle,);
+        return Text(
+          'error: Move not allowed.',
+          style: textStyle,
+        );
 
       default:
         return Text(''); // Temp...

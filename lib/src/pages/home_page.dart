@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
 
         return Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: gameModel.theme.backgroundColor,
             actions: <Widget>[
               Tooltip(
@@ -43,9 +44,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icon(Icons.data_usage),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) {
-                        return Stats();
-                      }),
+                      MaterialPageRoute(builder: (context) => Stats()),
                     ),
                   ),
                 ),
@@ -81,10 +80,8 @@ class _HomePageState extends State<HomePage> {
                         : Icon(Icons.volume_mute),
                     onPressed: () {
                       setState(
-                        () {
-                          gameModel.disableSoundEffects =
-                              !gameModel.disableSoundEffects;
-                        },
+                        () => gameModel.disableSoundEffects =
+                            !gameModel.disableSoundEffects,
                       );
                     },
                   ),
@@ -117,19 +114,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// This will be called after the widget has been completely rendered. Hence, the '_' in the parenthesis. It is fed to the Board object. // todo: Learn about underscore in paranthesis later on.
+  /// This will be called after the widget has been completely rendered. Hence, the '_' in the parenthesis. It is fed to the Board object. // todo: Learn about underscore in paranthesis later on...
   void _onGameStatusChange(_) {
     switch (gameModel.statusChange) {
       case StatusChange.draw:
         showGameOverDialog(context, gameModel.statusChange);
+        print('draw');
         break;
 
       case StatusChange.player1_won:
         showGameOverDialog(context, gameModel.statusChange);
+        print('player 1 won');
         break;
 
       case StatusChange.player2_won:
         showGameOverDialog(context, gameModel.statusChange);
+        print('player 2 won');
         break;
 
       // case StatusChange.error_next_move_unavailable:
