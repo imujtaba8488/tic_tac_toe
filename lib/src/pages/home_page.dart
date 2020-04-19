@@ -119,17 +119,17 @@ class _HomePageState extends State<HomePage> {
     switch (gameModel.statusChange) {
       case StatusChange.draw:
         showGameOverDialog(context, gameModel.statusChange);
-        print('draw');
+
         break;
 
       case StatusChange.player1_won:
         showGameOverDialog(context, gameModel.statusChange);
-        print('player 1 won');
+
         break;
 
       case StatusChange.player2_won:
         showGameOverDialog(context, gameModel.statusChange);
-        print('player 2 won');
+
         break;
 
       // case StatusChange.error_next_move_unavailable:

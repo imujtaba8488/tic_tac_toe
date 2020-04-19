@@ -44,7 +44,7 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         // !Mention reason why putting here later ....
-        if (gameModel.winKey.length == 3) controller.forward().orCancel;
+        if (gameModel.winKey.length == 3) controller.forward();
 
         // GameOverAlert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
         WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
