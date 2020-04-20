@@ -53,7 +53,11 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
             ),
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
-                onTap: () => gameModel.playMove(index),
+                onTap: () {
+                  // Checking for StatusChange helps in that as soon as the StatusChange changes from 'none' to any other StatusChange, any further user input is discarded. Without this check, though user wasn't able to change anything, but score still updated. Hence, it prevents any unforeseen consequences.
+                  if (gameModel.statusChange == StatusChange.none)
+                    gameModel.playMove(index);
+                },
                 child: Container(
                   margin: EdgeInsets.all(5.0),
                   decoration: gameModel.theme.decoration,
@@ -73,7 +77,7 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
   }
 }
 
-/// Draws the lines / guides to intimate the user that the game is over specifying move list which resulted in the win.
+/// Draws the lines / guides to intimate the user that the game is over by specifying the move list which resulted in the win.
 class StatusChangePainter extends CustomPainter {
   GameModel _gameModel;
   double value;
