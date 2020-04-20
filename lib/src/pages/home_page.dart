@@ -3,10 +3,10 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
-import '../components/game_over.dart';
 import '../models/app_theme.dart';
 import '../components/score_board.dart';
 import 'stats.dart';
+import '../components/game_over_board.dart';
 
 /// Describes the themes that are available for the app.
 enum Themes {
@@ -103,42 +103,26 @@ class _HomePageState extends State<HomePage> {
                 // Actual playboard.
                 Container(
                   padding: EdgeInsets.all(15.0),
-                  height: MediaQuery.of(context).size.height / 1.5,
-                  child: Board(_onGameStatusChange),
+                  height: MediaQuery.of(context).size.height / 1.9,
+                  child: Board(),
                 ),
+
+
+                // GameOver response system.
+                gameModel.statusChange == StatusChange.draw ||
+                        gameModel.statusChange == StatusChange.player1_won ||
+                        gameModel.statusChange == StatusChange.player2_won
+                    ? Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: GameOverBoard(),
+                      )
+                    : Container(),
               ],
             ),
           ),
         );
       },
     );
-  }
-
-  /// This will be called after the widget has been completely rendered. Hence, the '_' in the parenthesis. It is fed to the Board object. // todo: Learn about underscore in paranthesis later on...
-  void _onGameStatusChange(_) {
-    switch (gameModel.statusChange) {
-      case StatusChange.draw:
-        showGameOverDialog(context, gameModel.statusChange);
-
-        break;
-
-      case StatusChange.player1_won:
-        showGameOverDialog(context, gameModel.statusChange);
-
-        break;
-
-      case StatusChange.player2_won:
-        showGameOverDialog(context, gameModel.statusChange);
-
-        break;
-
-      // case StatusChange.error_next_move_unavailable:
-      //   showGameOverDialog(context, gameModel.statusChange);
-      //   break;
-
-      default:
-        break;
-    }
   }
 
   /// Selects the theme based on the given properties. // ? Should you extract this into its own file as a separate widget?

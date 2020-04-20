@@ -57,12 +57,12 @@ class Neomorphic extends AppTheme {
 
     gameOverTextStyle = GoogleFonts.aclonica(
       color: Colors.white,
-      fontSize: 30,
+      fontSize: 20,
     );
 
     resultTextStyle = GoogleFonts.ultra(
       color: Colors.white,
-      fontSize: 25,
+      fontSize: 18,
     );
   }
 }

@@ -4,11 +4,6 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/game_model.dart';
 
 class Board extends StatefulWidget {
-  /// Action to be taken when the gameStatus changes.
-  final Function onGameStatusChange;
-
-  Board(this.onGameStatusChange);
-
   @override
   _BoardState createState() => _BoardState();
 }
@@ -16,7 +11,7 @@ class Board extends StatefulWidget {
 class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation animation;
-  double value;
+  double value = 1.0;
 
   @override
   void initState() {
@@ -44,10 +39,9 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         // !Mention reason why putting here later ....
-        if (gameModel.winKey.length == 3) controller.forward();
+        // if (gameModel.winKey.length == 3) controller.forward();
 
-        // GameOverAlert may be displayed based on the gameStatus only when the current widget has completely rendered itself, otherwise, displaying an alert based on the gameStatus during the build of this widget results in an error.
-        WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange);
+        // In case a GameOverAlert needs to be displayed based on the game Status only when the current widget has completely rendered itself, otherwise, displaying an alert based on the game Status during the build of this widget results in an error. This is what needs to be put here 'WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange)'
 
         // Create a 3x3 grid.
         return CustomPaint(
@@ -79,6 +73,7 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
   }
 }
 
+/// Draws the lines / guides to intimate the user that the game is over specifying move list which resulted in the win.
 class StatusChangePainter extends CustomPainter {
   GameModel _gameModel;
   double value;
@@ -91,24 +86,24 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(1) &&
         _gameModel.winKey.contains(2)) {
       canvas.drawLine(
-        Offset(0.0, size.height / 8.0),
-        Offset(size.width * value, size.height / 8.0),
+        Offset(0.0, size.height / 6.0),
+        Offset(size.width * value, size.height / 6.0),
         brush,
       );
     } else if (_gameModel.winKey.contains(3) &&
         _gameModel.winKey.contains(4) &&
         _gameModel.winKey.contains(5)) {
       canvas.drawLine(
-        Offset(0.0, size.height / 2.56),
-        Offset(size.width * value, size.height / 2.56),
+        Offset(0.0, size.height / 2.0),
+        Offset(size.width * value, size.height / 2.0),
         brush,
       );
     } else if (_gameModel.winKey.contains(6) &&
         _gameModel.winKey.contains(7) &&
         _gameModel.winKey.contains(8)) {
       canvas.drawLine(
-        Offset(0.0, size.height / 1.54),
-        Offset(size.width * value, size.height / 1.54),
+        Offset(0.0, size.height / 1.2),
+        Offset(size.width * value, size.height / 1.2),
         brush,
       );
     } else if (_gameModel.winKey.contains(0) &&
@@ -116,7 +111,7 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(6)) {
       canvas.drawLine(
         Offset(size.width / 6.27, 0.0),
-        Offset(size.width / 6.27, (size.height / 1.27) * value),
+        Offset(size.width / 6.27, size.height * value),
         brush,
       );
     } else if (_gameModel.winKey.contains(1) &&
@@ -124,7 +119,7 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(7)) {
       canvas.drawLine(
         Offset((size.width / 2.0) * value, 0.0),
-        Offset(size.width / 2.0, (size.height / 1.27) * value),
+        Offset(size.width / 2.0, size.height * value),
         brush,
       );
     } else if (_gameModel.winKey.contains(2) &&
@@ -132,7 +127,7 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(8)) {
       canvas.drawLine(
         Offset((size.width / 1.2) * value, 0.0),
-        Offset(size.width / 1.2, (size.height / 1.27) * value),
+        Offset(size.width / 1.2, size.height * value),
         brush,
       );
     } else if (_gameModel.winKey.contains(0) &&
@@ -140,7 +135,7 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(8)) {
       canvas.drawLine(
         Offset(0.0, 0.0),
-        Offset(size.width, (size.height / 1.27) * value),
+        Offset(size.width, size.height * value),
         brush,
       );
     } else if (_gameModel.winKey.contains(2) &&
@@ -148,7 +143,7 @@ class StatusChangePainter extends CustomPainter {
         _gameModel.winKey.contains(6)) {
       canvas.drawLine(
         Offset(size.width, 0.0),
-        Offset(0.0, (size.height / 1.27) * value),
+        Offset(0.0, size.height * value),
         brush,
       );
     }
