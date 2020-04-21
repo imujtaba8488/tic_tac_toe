@@ -3,49 +3,52 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Cloud {
   final Firestore firestore = Firestore.instance;
 
+  /// Updates a win or loss for the given username in the cloud.
   void sync(String username, bool win) async {
-    String passcode;
 
-    int wins = 0;
-    int lost = 0;
+    int totalWins = 0;  // total number of wins.
+    int totalLost = 0;  // total number of losses.
 
+
+    String uname; // temp: username.
+    String pwd;   // temp: password.
+    int wins;     // temp: previous wins.
+    int lost;     // temp: previous lost.
+
+    // Get previous stats / info.
     await firestore.collection('score').getDocuments().then((snapshot) {
       snapshot.documents.forEach((document) {
-        String uname = '';
-        int w = 0;
-        int l = 0;
 
         uname = document.data['username'];
-        passcode = document.data['password'];
-        w = document.data['wins'];
-        l = document.data['lost'];
+        pwd = document.data['password'];
+        wins = document.data['wins'];
+        lost = document.data['lost'];
 
         if (uname.contains(username)) {
-          wins = w;
-          lost = l;
+          totalWins = wins;
+          totalLost = lost;
         }
       });
     });
 
-    print('wins: $wins');
-    print('lost: $lost');
-
+    // If win update wins else update lost.
     win ? wins++ : lost++;
 
+    // Update on firestore.
     await firestore.collection('score').document(username).setData({
       'username': username,
-      'password': passcode,
-      'wins': wins,
-      'lost': lost,
+      'password': pwd,
+      'wins': totalWins,
+      'lost': totalLost,
     });
-
-    // firestore.runTransaction()
   }
 
+  /// ! Caution: deletes the entire collection, including user credentials.
   void reset() async {
-    // await firestore.collection(username).document('score').delete();
+    // ? how to delete an entire collection?
   }
 
+  /// Returns true if a user with the given [username] exists in the cloud.
   Future<bool> userExists(String username, String password) async {
     bool result = false;
 
@@ -56,15 +59,52 @@ class Cloud {
       }
     });
 
-    if (!result) {
-      await firestore.collection('score').document(username).setData({
-        'username': username,
-        'password': password,
-        'wins': 0,
-        'lost': 0,
+    return Future.value(result);
+  }
+
+  /// Adds the user with the given [username] to the cloud. Note: as of now duplicate usernames are not checked for //! Review:
+  void addUser(String username, String password) async {
+    await firestore.collection('score').document(username).setData({
+      'username': username,
+      'password': password,
+      'wins': 0,
+      'lost': 0,
+    });
+  }
+
+  /// Gets a list of all the users in the cloud.
+  Future<List<Map<String, dynamic>>> get allUsers async {
+    List<Map<String, dynamic>> data = List();
+
+    firestore.collection('score').getDocuments().then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((document) {
+        String username = document.data['username'];
+        String password = document.data['password'];
+        int wins = document.data['wins'];
+        int lost = document.data['lost'];
+
+        data.add({
+          'username': username,
+          'password': password,
+          'wins': wins,
+          'lost': lost,
+        });
       });
+    });
+
+    return Future.value(data);
+  }
+
+  /// Gets the user with the given [username].
+  Future<Map<String,dynamic>> getUser(String username) async {
+    List<Map<String,dynamic>> all = await allUsers;
+
+    for(int i = 0 ; i < all.length; i++) {
+      if (all[i]['username'].contains(username)) {
+        return Future.value(all[i]);
+      }
     }
 
-    return Future.value(result);
+    return Future.value(null);
   }
 }
