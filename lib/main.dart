@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:tic_tac_toe/src/models/sound_effect_player.dart';
 import 'package:tic_tac_toe/src/pages/home_page.dart';
 
 import './src/scoped_models/game_model.dart';
@@ -14,13 +15,14 @@ class TicTacToe extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModel(
       model: GameModel(
-        Player(name: 'You', mark: 'X'),
-        Player(name: 'AI', mark: '0'),
+        Player(name: '', mark: 'X', moveSoundEffect: SoundEffect.userMove),
+        Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
         Turn.player1,
+        disableSoundEffects: true,
         theme: Neomorphic(),
       ),
       child: MaterialApp(
-        home: HomePage(),
+        home: LoginPage(),
       ),
     );
   }

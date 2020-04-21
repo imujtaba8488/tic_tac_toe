@@ -19,10 +19,6 @@ class ScoreCard extends StatelessWidget {
           padding: EdgeInsets.all(5),
           child: Column(
             children: <Widget>[
-              // Text(
-              //   label,
-              //   style: gameModel.theme.textStyle,
-              // ),
               Container(
                 padding: EdgeInsets.all(10),
                 decoration: gameModel.theme.decoration,
@@ -33,11 +29,11 @@ class ScoreCard extends StatelessWidget {
                           ? 'Draws'
                           : 'Your Score',
                   child: Icon(
-                    label.contains('user')
-                        ? Icons.person
-                        : label.contains('Draws')
+                    label.containsIgnoreCase('ai')
+                        ? Icons.computer
+                        : label.containsIgnoreCase('Draws')
                             ? Icons.close
-                            : Icons.computer,
+                            : Icons.person,
                     color: gameModel.theme.iconColor,
                   ),
                 ),

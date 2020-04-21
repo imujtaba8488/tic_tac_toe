@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:tic_tac_toe/src/pages/leader_board_page.dart';
 
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
@@ -35,6 +36,20 @@ class _HomePageState extends State<HomePage> {
             automaticallyImplyLeading: false,
             backgroundColor: gameModel.theme.backgroundColor,
             actions: <Widget>[
+              Tooltip(
+                message: 'Leaderboard',
+                child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: gameModel.theme.decoration,
+                  child: IconButton(
+                    icon: Icon(Icons.star),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LeaderBoardPage()),
+                    ),
+                  ),
+                ),
+              ),
               Tooltip(
                 message: 'Statistics',
                 child: Container(

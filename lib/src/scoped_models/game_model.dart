@@ -186,7 +186,7 @@ class GameModel extends Model {
       statusChange = StatusChange.player1_won;
 
       //Cloud needs reviewing, hence, the temp flag.
-      Cloud().sync(true); // !temp
+      Cloud().sync(player1.name, true); // !temp
 
       notifyListeners();
     } else if (_playStatus == _PlayStatus.player2_won) {
@@ -195,7 +195,7 @@ class GameModel extends Model {
       statusChange = StatusChange.player2_won;
 
       // Cloud needs reviewing, hence, the temp flag.
-      Cloud().sync(false); // !temp
+      Cloud().sync(player1.name, false); // !temp
 
       notifyListeners();
     } else if (_moveStatus == _MoveStatus.next_move_unavailable) {

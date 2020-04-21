@@ -1,67 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:tic_tac_toe/src/models/app_theme.dart';
+import 'package:tic_tac_toe/src/models/cloud.dart';
+import 'package:tic_tac_toe/src/models/sound_effect_player.dart';
 
 import 'home_page.dart';
 import '../scoped_models/game_model.dart';
+import '../models/player.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return LoginPageState();
+  }
+}
+
+class LoginPageState extends State<LoginPage> {
+  GlobalKey<FormState> _formKey = GlobalKey();
+  String username = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Scaffold(
           backgroundColor: gameModel.theme.backgroundColor,
-          body: SafeArea(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Just T3',
-                    style: gameModel.theme.gameOverTextStyle,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2.0,
-                    height: MediaQuery.of(context).size.height / 2.0,
-                    child: CustomPaint(
-                      painter: GameIdentityPainter(gameModel),
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Just T3',
+                      style: gameModel.theme.gameOverTextStyle,
                     ),
-                  ),
-                  RaisedButton(
-                    onPressed: () async {
-                      // String name = '';
-                      // await gameModel.login().then((value){
-                      //   name = value.displayName;
-                      // });
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                      );
-                    },
-                    child: Text('Login'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      'copyright @ IM8488 (2020). All rights reserved.',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: CustomPaint(
+                        painter: GameIdentityPainter(gameModel),
                       ),
                     ),
-                  )
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            TextFormField(
+                              decoration:
+                                  InputDecoration(labelText: 'username'),
+                              onSaved: (value) => username = value,
+                              onFieldSubmitted: (value) =>
+                                  onFormSave(gameModel),
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'password',
+                              ),
+                              obscureText: true,
+                              onSaved: (value) => password = value,
+                              onFieldSubmitted: (value) =>
+                                  onFormSave(gameModel),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        'copyright @ IM8488 (2020). All rights reserved.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  void onFormSave(GameModel gameModel) async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
+      await Cloud().userExists(username, password).then((bool exists) {
+        if (exists) {
+          gameModel.player1.name = username;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return HomePage();
+              },
+            ),
+          );
+        }else {
+          print("user doens't exist. Please sign up!");
+        }
+      });
+    }
   }
 }
 

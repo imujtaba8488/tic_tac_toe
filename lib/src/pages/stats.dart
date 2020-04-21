@@ -38,7 +38,7 @@ class _StatsState extends State<Stats> {
             ],
           ),
           body: StreamBuilder(
-            stream: Firestore.instance.collection('players').snapshots(),
+            stream: Firestore.instance.collection('score').snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData || snapshot.data.documents.length == 0) {
                 return Center(
@@ -48,36 +48,42 @@ class _StatsState extends State<Stats> {
                   ),
                 );
               } else {
-                return ListTile(
-                  title: Container(
-                    margin: EdgeInsets.all(15),
-                    height: 50,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.white),
+                for (int i = 0; i < snapshot.data.documents.length; i++) {
+                  if (snapshot.data.documents[i]['username']
+                      .contains(gameModel.player1.name)) {
+                    return ListTile(
+                      title: Container(
+                        margin: EdgeInsets.all(15),
+                        height: 50,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Colors.white),
+                          ),
+                        ),
+                        child: Text(
+                          'ALL TIME SCORE',
+                          style: gameModel.theme.gameOverTextStyle,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'ALL TIME SCORE',
-                      style: gameModel.theme.gameOverTextStyle,
-                    ),
-                  ),
-                  subtitle: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'wins: ${snapshot.data.documents[0]['wins']}',
-                        style: gameModel.theme.resultTextStyle,
+                      subtitle: Column(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'wins: ${snapshot.data.documents[i]['wins']}',
+                            style: gameModel.theme.resultTextStyle,
+                          ),
+                          Text(
+                            'lost: ${snapshot.data.documents[i]['lost']}',
+                            style: gameModel.theme.resultTextStyle,
+                          ),
+                        ],
                       ),
-                      Text(
-                        'lost: ${snapshot.data.documents[0]['lost']}',
-                        style: gameModel.theme.resultTextStyle,
-                      ),
-                    ],
-                  ),
-                );
+                    );
+                  }
+                }
+                return Container();
               }
             },
           ),
