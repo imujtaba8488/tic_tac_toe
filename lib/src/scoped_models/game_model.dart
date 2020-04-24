@@ -33,6 +33,7 @@ class GameModel extends Model {
 
   SoundEffectPlayer _soundEffectPlayer;
 
+
   /// Whether the AI is taking it's time to think, before it plays it's turn.
   bool _isAiThinking = false;
 
@@ -267,9 +268,10 @@ class GameModel extends Model {
     print('AI Play: ${againstAI ? 'on' : 'off'}');
   }
 
+  /// Refreshes and updates local data with cloud data.
   void refreshScores() => _syncScoreWithCloud(player1);
 
-  /// Synchronizes the cloud data with the local data.
+  /// Synchronizes local data with the cloud data.
   void _syncScoreWithCloud(Player player) async {
     // Get user data from the cloud.
     Map<String, dynamic> p = await Cloud().getUser(player.name);
