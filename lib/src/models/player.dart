@@ -24,6 +24,7 @@ class Player {
   /// The lifetime score of the player for all the games.
   Score lifeTimeScore;
 
+  int rank;
   int lifeTimeMoveCount;
   int totalGamesPlayed;
   // Others here such as; min move time, max move time, etc.
