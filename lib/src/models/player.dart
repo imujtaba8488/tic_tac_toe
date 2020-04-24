@@ -5,39 +5,47 @@ class Player {
   /// Name of the player.
   String name;
 
+  String username;
+
+  String password;
+
   /// The mark assigned to the player.
   String mark;
 
   /// The total number of moves played by this player.
-  List<int> _movesPlayed;
+  List<int> _currentMovesPlayed;
 
   /// The current game score of the player.
   Score _currentScore;
 
+  /// The move sound-effect assigned to this player.
+  SoundEffect moveSoundEffect;
+
   /// The lifetime score of the player for all the games.
   Score lifeTimeScore;
 
-  /// The move sound-effect assigned to this player.
-  SoundEffect moveSoundEffect;
+  int lifeTimeMoveCount;
+  int totalGamesPlayed;
+  // Others here such as; min move time, max move time, etc.
 
   Player({
     this.name = '',
     this.mark = '',
     this.moveSoundEffect = SoundEffect.userMove,
   }) {
-    _movesPlayed = [];
+    _currentMovesPlayed = [];
     _currentScore = Score(wins: 0, loss: 0);
     lifeTimeScore = Score();
   }
 
   /// Adds the given move [movePlayedAt] to the list of this player's moves.
   void addMove(int movePlayedAt) {
-    _movesPlayed.add(movePlayedAt);
+    _currentMovesPlayed.add(movePlayedAt);
   }
 
   /// Resets all player moves back to 0.
   void resetMoves() {
-    _movesPlayed.clear();
+    _currentMovesPlayed.clear();
   }
 
   /// Updates score by a win.
@@ -51,7 +59,7 @@ class Player {
   }
 
   /// Returns a read-only copy of moves played by this player.
-  List<int> get movesPlayed => List<int>.unmodifiable(_movesPlayed);
+  List<int> get movesPlayed => List<int>.unmodifiable(_currentMovesPlayed);
 
   /// Returns a read-only copy of score of this player.
   Score get currentScore =>

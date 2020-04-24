@@ -33,6 +33,7 @@ dependencies:
   cloud_firestore: 
   google_sign_in:
   firebase_auth:
+  fluttericon:
 
 
 
@@ -60,6 +61,7 @@ flutter:
   assets:
     - assets/audio/
     - assets/docs/colors.json
+    - assets/images/trophy.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

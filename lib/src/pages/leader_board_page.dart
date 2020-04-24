@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/scoped_models/game_model.dart';
+
+import '../scoped_models/game_model.dart';
 
 class LeaderBoardPage extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
+
         return Scaffold(
           backgroundColor: gameModel.theme.backgroundColor,
           appBar: AppBar(
@@ -53,7 +55,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   Widget itemBuilder(BuildContext context, int index) {
     return ListTile(
       title: Text(
-        "${ss.data.documents[index]['username']}",
+        "${ss.data.documents[index]['username']}'",
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,

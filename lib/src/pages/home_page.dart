@@ -7,7 +7,7 @@ import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
 import '../models/app_theme.dart';
 import '../components/score_board.dart';
-import 'stats.dart';
+import 'statistics_page.dart';
 import '../components/game_over_board.dart';
 
 /// Describes the themes that are available for the app.
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icon(Icons.data_usage),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Stats()),
+                      MaterialPageRoute(builder: (context) => StatisticsPage()),
                     ),
                   ),
                 ),

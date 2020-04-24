@@ -229,7 +229,7 @@ class GameModel extends Model {
     }
   }
 
-  /// Plays a random move from the [movesRemaining].
+  /// Plays a random move from the [movesRemaining] i.e. the remaining moves.
   void _playRandomMove() {
     movesRemaining.shuffle();
     playMove(movesRemaining[Random().nextInt(movesRemaining.length)]);
