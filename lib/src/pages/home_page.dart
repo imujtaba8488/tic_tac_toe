@@ -57,7 +57,8 @@ class _HomePageState extends State<HomePage> {
                     icon: Icon(Icons.star),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LeaderBoardPage()),
+                      MaterialPageRoute(
+                          builder: (context) => LeaderBoardPage()),
                     ),
                   ),
                 ),
@@ -134,11 +135,10 @@ class _HomePageState extends State<HomePage> {
                   child: Board(),
                 ),
 
-
                 // GameOver response system.
                 gameModel.statusChange == StatusChange.draw ||
                         gameModel.statusChange == StatusChange.player1_won ||
-                        gameModel.statusChange == StatusChange.player2_won
+                        gameModel.statusChange == StatusChange.player2_won 
                     ? Padding(
                         padding: EdgeInsets.all(15.0),
                         child: GameOverBoard(),

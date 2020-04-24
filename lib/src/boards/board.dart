@@ -38,9 +38,6 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
-        // !Mention reason why putting here later ....
-        // if (gameModel.winKey.length == 3) controller.forward();
-
         // In case a GameOverAlert needs to be displayed based on the game Status only when the current widget has completely rendered itself, otherwise, displaying an alert based on the game Status during the build of this widget results in an error. This is what needs to be put here 'WidgetsBinding.instance.addPostFrameCallback(widget.onGameStatusChange)'
 
         // Create a 3x3 grid.
@@ -54,8 +51,10 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                 onTap: () {
-                  // Checking for StatusChange helps in that as soon as the StatusChange changes from 'none' to any other StatusChange, any further user input is discarded. Without this check, though user wasn't able to change anything, but score still updated. Hence, it prevents any unforeseen consequences.
-                  if (gameModel.statusChange == StatusChange.none)
+                  // Checking for StatusChange helps in that as soon as the StatusChange changes from 'none' or 'error_next_move_unavailable' to any other StatusChange, any further user input is discarded. Without this check, though user couldn't change anything, but the score still updated. Hence, it prevents any unforeseen consequences. Also, remember, 'error_next_move_unavailable' simply hints the user that the move is not available to play.
+                  if (gameModel.statusChange == StatusChange.none ||
+                      gameModel.statusChange ==
+                          StatusChange.error_next_move_unavailable)
                     gameModel.playMove(index);
                 },
                 child: Container(

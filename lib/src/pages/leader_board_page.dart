@@ -60,7 +60,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
         ),
       ),
       trailing: Container(
-        width: MediaQuery.of(context).size.width / 3.0,
+        width: MediaQuery.of(context).size.width / 2.0,
         child: Row(
           children: <Widget>[
             Text(

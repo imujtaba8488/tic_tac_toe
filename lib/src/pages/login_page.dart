@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/models/app_theme.dart';
 import 'package:tic_tac_toe/src/models/cloud.dart';
-import 'package:tic_tac_toe/src/models/sound_effect_player.dart';
 
-import 'home_page.dart';
 import '../scoped_models/game_model.dart';
-import '../models/player.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -99,7 +96,8 @@ class LoginPageState extends State<LoginPage> {
       await Cloud().userExists(username, password).then((bool exists) {
         if (exists) {
           gameModel.player1.name = username;
-
+          gameModel.refreshScores();
+          
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -108,7 +106,7 @@ class LoginPageState extends State<LoginPage> {
               },
             ),
           );
-        }else {
+        } else {
           print("user doens't exist. Please sign up!");
         }
       });

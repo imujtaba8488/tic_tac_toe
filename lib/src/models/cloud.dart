@@ -4,21 +4,18 @@ class Cloud {
   final Firestore firestore = Firestore.instance;
 
   /// Updates a win or loss for the given username in the cloud.
-  void sync(String username, bool win) async {
-
-    int totalWins = 0;  // total number of wins.
-    int totalLost = 0;  // total number of losses.
-
+  Future<void> sync(String username, bool win) async {
+    int totalWins = 0; // total number of wins.
+    int totalLost = 0; // total number of losses.
 
     String uname; // temp: username.
-    String pwd;   // temp: password.
-    int wins;     // temp: previous wins.
-    int lost;     // temp: previous lost.
+    String pwd; // temp: password.
+    int wins; // temp: previous wins.
+    int lost; // temp: previous lost.
 
     // Get previous stats / info.
     await firestore.collection('score').getDocuments().then((snapshot) {
       snapshot.documents.forEach((document) {
-
         uname = document.data['username'];
         pwd = document.data['password'];
         wins = document.data['wins'];
@@ -32,10 +29,10 @@ class Cloud {
     });
 
     // If win update wins else update lost.
-    win ? wins++ : lost++;
+    win ? totalWins++ : totalLost++;
 
     // Update on firestore.
-    await firestore.collection('score').document(username).setData({
+    firestore.collection('score').document(username).setData({
       'username': username,
       'password': pwd,
       'wins': totalWins,
@@ -76,7 +73,10 @@ class Cloud {
   Future<List<Map<String, dynamic>>> get allUsers async {
     List<Map<String, dynamic>> data = List();
 
-    firestore.collection('score').getDocuments().then((QuerySnapshot snapshot) {
+    await firestore
+        .collection('score')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((document) {
         String username = document.data['username'];
         String password = document.data['password'];
@@ -96,15 +96,17 @@ class Cloud {
   }
 
   /// Gets the user with the given [username].
-  Future<Map<String,dynamic>> getUser(String username) async {
-    List<Map<String,dynamic>> all = await allUsers;
+  Future<Map<String, dynamic>> getUser(String username) async {
+    List<Map<String, dynamic>> cloudUsers = await allUsers;
 
-    for(int i = 0 ; i < all.length; i++) {
-      if (all[i]['username'].contains(username)) {
-        return Future.value(all[i]);
+    Map<String, dynamic> user;
+
+    for (int i = 0; i < cloudUsers.length; i++) {
+      if (cloudUsers[i]['username'].contains(username)) {
+        user = cloudUsers[i];
       }
     }
 
-    return Future.value(null);
+    return Future.value(user);
   }
 }

@@ -15,7 +15,7 @@ class Player {
   Score _currentScore;
 
   /// The lifetime score of the player for all the games.
-  Score _lifeTimeScore;
+  Score lifeTimeScore;
 
   /// The move sound-effect assigned to this player.
   SoundEffect moveSoundEffect;
@@ -27,7 +27,7 @@ class Player {
   }) {
     _movesPlayed = [];
     _currentScore = Score(wins: 0, loss: 0);
-    _lifeTimeScore = Score();
+    lifeTimeScore = Score();
   }
 
   /// Adds the given move [movePlayedAt] to the list of this player's moves.
@@ -43,13 +43,11 @@ class Player {
   /// Updates score by a win.
   void registerAWin() {
     _currentScore.wins++;
-    _lifeTimeScore.wins++;
   }
 
   /// Updates score by a loss.
   void registerALoss() {
     _currentScore.loss++;
-    _lifeTimeScore.loss++;
   }
 
   /// Returns a read-only copy of moves played by this player.
