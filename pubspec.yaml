@@ -28,14 +28,8 @@ dependencies:
   path_provider: ^1.6.5
   augmentory:
     path: '../augmentory'
-  permission: ^0.1.7
   scoped_model: ^1.0.1
   cloud_firestore: 
-  google_sign_in:
-  firebase_auth:
-  fluttericon:
-
-
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
-
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/game_model.dart';

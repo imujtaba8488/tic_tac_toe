@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:tic_tac_toe/src/pages/leader_board_page.dart';
 
 import '../boards/board.dart';
 import '../scoped_models/game_model.dart';
@@ -9,6 +8,7 @@ import '../models/app_theme.dart';
 import '../components/score_board.dart';
 import 'statistics_page.dart';
 import '../components/game_over_board.dart';
+import 'leaderboard_page.dart';
 
 /// Describes the themes that are available for the app.
 enum Themes {
@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                 // GameOver response system.
                 gameModel.statusChange == StatusChange.draw ||
                         gameModel.statusChange == StatusChange.player1_won ||
-                        gameModel.statusChange == StatusChange.player2_won 
+                        gameModel.statusChange == StatusChange.player2_won
                     ? Padding(
                         padding: EdgeInsets.all(15.0),
                         child: GameOverBoard(),
