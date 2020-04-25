@@ -18,9 +18,9 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
       builder: (context, child, gameModel) {
 
         return Scaffold(
-          backgroundColor: gameModel.theme.backgroundColor,
+
           appBar: AppBar(
-            backgroundColor: gameModel.theme.backgroundColor,
+
           ),
           body: ScopedModelDescendant<GameModel>(
             builder: (context, child, gameModel) {
@@ -32,7 +32,6 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
                     return Center(
                       child: Text(
                         'No data...',
-                        style: gameModel.theme.gameOverTextStyle,
                       ),
                     );
                   } else {
@@ -57,7 +56,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
       title: Text(
         "${ss.data.documents[index]['username']}'",
         style: TextStyle(
-          color: Colors.white,
+
           fontSize: 20,
         ),
       ),
@@ -68,7 +67,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
             Text(
               'Wins: ${ss.data.documents[index]['wins']}',
               style: TextStyle(
-                color: Colors.white,
+
                 fontSize: 20,
               ),
             ),
@@ -76,7 +75,6 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
             Text(
               'Lost: ${ss.data.documents[index]['lost']}',
               style: TextStyle(
-                color: Colors.white,
                 fontSize: 20,
               ),
             ),

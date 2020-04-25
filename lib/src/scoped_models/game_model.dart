@@ -1,9 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../models/app_theme.dart';
 import '../models/cloud.dart';
 import '../models/player.dart';
 import '../models/score.dart';
@@ -33,7 +31,6 @@ class GameModel extends Model {
 
   SoundEffectPlayer _soundEffectPlayer;
 
-
   /// Whether the AI is taking it's time to think, before it plays it's turn.
   bool _isAiThinking = false;
 
@@ -48,9 +45,6 @@ class GameModel extends Model {
   /// occur, etc.
   StatusChange statusChange;
 
-  /// The theme to be used throughout the app.
-  AppTheme _theme;
-
   GameModel(
     this.player1,
     this.player2,
@@ -59,8 +53,7 @@ class GameModel extends Model {
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
     this.enableLogs = false,
-    @required AppTheme theme,
-  }) : _theme = theme {
+  }) {
     _initMovesToDefaultState();
 
     _soundEffectPlayer = SoundEffectPlayer();
@@ -150,7 +143,7 @@ class GameModel extends Model {
       _playStatus = _PlayStatus.player2_won;
       _gameStatusChange();
     } else {
-      _playStatus = _PlayStatus.active;  
+      _playStatus = _PlayStatus.active;
     }
   }
 
@@ -296,13 +289,4 @@ class GameModel extends Model {
 
   /// Returns an unmodifiable list containing indexes which resulted in a win.
   List<int> get winKey => List.unmodifiable(_winKey);
-
-  /// Customized setter for setting the theme, which also triggers the
-  /// notifyListeners, so that the theme may be updated wherever it being used.
-  set theme(AppTheme theme) {
-    _theme = theme;
-    notifyListeners();
-  }
-
-  AppTheme get theme => _theme;
 }

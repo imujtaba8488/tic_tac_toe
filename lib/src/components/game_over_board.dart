@@ -9,24 +9,19 @@ class GameOverBoard extends StatelessWidget {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Container(
-          decoration: gameModel.theme.decoration,
           child: ListTile(
             title: Text(
               'GameOver...',
-              style: gameModel.theme.gameOverTextStyle,
             ),
             subtitle: gameResult(gameModel),
             trailing: Container(
               margin: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
-                color: gameModel.theme.backgroundColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 1.0,
-                    offset: Offset(-0.5, -0.5)
-
-                  ),
+                      color: Colors.white,
+                      blurRadius: 1.0,
+                      offset: Offset(-0.5, -0.5)),
                   BoxShadow(
                     color: Colors.black,
                     blurRadius: 1.0,
@@ -39,7 +34,6 @@ class GameOverBoard extends StatelessWidget {
                 onPressed: () => gameModel.reset(),
                 child: Text(
                   'Play Again?',
-                  style: gameModel.theme.buttonTextStyle,
                 ),
               ),
             ),

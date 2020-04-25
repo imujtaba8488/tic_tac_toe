@@ -15,13 +15,11 @@ class ScoreCard extends StatelessWidget {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Container(
-          decoration: gameModel.theme.decoration,
           padding: EdgeInsets.all(5),
           child: Column(
             children: <Widget>[
               Container(
                 padding: EdgeInsets.all(10),
-                decoration: gameModel.theme.decoration,
                 child: Tooltip(
                   message: label.containsIgnoreCase('ai')
                       ? 'AI Score'
@@ -34,7 +32,6 @@ class ScoreCard extends StatelessWidget {
                         : label.containsIgnoreCase('Draws')
                             ? Icons.close
                             : Icons.person,
-                    color: gameModel.theme.iconColor,
                   ),
                 ),
               ),
@@ -43,7 +40,6 @@ class ScoreCard extends StatelessWidget {
               ),
               Text(
                 score.toString(),
-                style: gameModel.theme.scoreTextStyle,
               ),
             ],
           ),

@@ -59,11 +59,9 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
                 },
                 child: Container(
                   margin: EdgeInsets.all(5.0),
-                  decoration: gameModel.theme.decoration,
                   child: Center(
                     child: Text(
                       gameModel.moves[index],
-                      style: gameModel.theme.moveTextStyleBlackHansSans,
                     ),
                   ),
                 ),

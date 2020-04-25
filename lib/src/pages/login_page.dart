@@ -22,7 +22,6 @@ class LoginPageState extends State<LoginPage> {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Scaffold(
-          backgroundColor: gameModel.theme.backgroundColor,
           body: SingleChildScrollView(
             child: SafeArea(
               child: Container(
@@ -34,7 +33,6 @@ class LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     Text(
                       'Just T3',
-                      style: gameModel.theme.gameOverTextStyle,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
@@ -164,7 +162,6 @@ class GameIdentityPainter extends CustomPainter {
   /// The default paint brush to use for painting the items.
   Paint get defaultBrush {
     return Paint()
-      ..color = gameModel.theme.iconColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
   }
@@ -226,7 +223,6 @@ class GameIdentityPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
       text: TextSpan(
         text: text,
-        style: gameModel.theme.moveTextStyleMonoton,
       ),
     );
   }

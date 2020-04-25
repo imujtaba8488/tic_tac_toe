@@ -9,7 +9,6 @@ class StatisticsPage extends StatelessWidget {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Scaffold(
-          backgroundColor: gameModel.theme.backgroundColor,
           appBar: AppBar(),
           body: SingleChildScrollView(
             child: Column(

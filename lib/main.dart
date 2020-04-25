@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:tic_tac_toe/src/models/sound_effect_player.dart';
 
-import './src/models/app_theme.dart';
 import './src/models/player.dart';
 import './src/pages/login_page.dart';
 import './src/scoped_models/game_model.dart';
@@ -18,7 +17,6 @@ class TicTacToe extends StatelessWidget {
         Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
         Turn.player1,
         disableSoundEffects: true,
-        theme: NeomorphicWhite(color: Colors.white),
       ),
       child: MaterialApp(
         home: LoginPage(),
