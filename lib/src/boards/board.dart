@@ -58,6 +58,10 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
                     gameModel.playMove(index);
                 },
                 child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   margin: EdgeInsets.all(5.0),
                   child: Center(
                     child: Text(
