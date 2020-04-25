@@ -86,37 +86,3 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
     );
   }
 }
-
-// if (snapshot.data.documents[i]['username']
-//     .contains(gameModel.player1.name)) {
-//   return ListTile(
-//     title: Container(
-//       margin: EdgeInsets.all(15),
-//       height: 50,
-//       alignment: Alignment.center,
-//       decoration: BoxDecoration(
-//         border: Border(
-//           bottom: BorderSide(color: Colors.white),
-//         ),
-//       ),
-//       child: Text(
-//         'ALL TIME SCORE',
-//         style: gameModel.theme.gameOverTextStyle,
-//       ),
-//     ),
-//     subtitle: Column(
-//       // mainAxisAlignment: MainAxisAlignment.center,
-//       // crossAxisAlignment: CrossAxisAlignment.center,
-//       children: <Widget>[
-//         Text(
-//           'wins: ${snapshot.data.documents[i]['wins']}',
-//           style: gameModel.theme.resultTextStyle,
-//         ),
-//         Text(
-//           'lost: ${snapshot.data.documents[i]['lost']}',
-//           style: gameModel.theme.resultTextStyle,
-//         ),
-//       ],
-//     ),
-//   );
-// }

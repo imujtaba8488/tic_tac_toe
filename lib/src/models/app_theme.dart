@@ -66,3 +66,48 @@ class Neomorphic extends AppTheme {
     );
   }
 }
+
+class NeomorphicWhite extends AppTheme {
+  Color color;
+  NeomorphicWhite({this.color = Colors.transparent}) {
+    decoration = BoxDecoration(
+      color: color,
+      border: Border.all(),
+      borderRadius: BorderRadius.circular(15.0),
+    );
+
+    moveTextStyleMonoton = GoogleFonts.monoton(
+      color: Colors.black,
+      fontSize: 50,
+    );
+
+    moveTextStyleBlackHansSans = GoogleFonts.blackHanSans(
+      color: Colors.black,
+      fontSize: 50,
+    );
+
+    backgroundColor = color;
+
+    iconColor = Colors.black;
+
+    scoreTextStyle = GoogleFonts.aclonica(
+      fontSize: 40,
+      color: Colors.black,
+    );
+
+    buttonTextStyle = TextStyle(
+      color: Colors.black,
+      fontSize: 20,
+    );
+
+    gameOverTextStyle = GoogleFonts.aclonica(
+      color: Colors.black,
+      fontSize: 20,
+    );
+
+    resultTextStyle = GoogleFonts.ultra(
+      color: Colors.black,
+      fontSize: 18,
+    );
+  }
+}

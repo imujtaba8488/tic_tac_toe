@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            backgroundColor: gameModel.theme.backgroundColor,
             actions: <Widget>[
               Tooltip(
                 message: 'Exit',

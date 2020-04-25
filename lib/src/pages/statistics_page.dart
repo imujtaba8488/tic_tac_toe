@@ -9,7 +9,7 @@ class StatisticsPage extends StatelessWidget {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
         return Scaffold(
-          // backgroundColor: gameModel.theme.backgroundColor,
+          backgroundColor: gameModel.theme.backgroundColor,
           appBar: AppBar(),
           body: SingleChildScrollView(
             child: Column(
@@ -175,6 +175,7 @@ class StatisticsPage extends StatelessWidget {
     );
   }
 
+  /// Returns a TableRow for the main stats. // !Review later...
   TableRow _mainStatRow({@required Widget child1, @required Widget child2}) {
     return TableRow(
       children: [
@@ -191,6 +192,7 @@ class StatisticsPage extends StatelessWidget {
     );
   }
 
+  /// Returns a TableRow for extra stats. // ! Review later... 
   TableRow _extraStatRow({
     Icon icon,
     String label,

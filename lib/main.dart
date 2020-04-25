@@ -18,7 +18,7 @@ class TicTacToe extends StatelessWidget {
         Player(name: 'AI', mark: '0', moveSoundEffect: SoundEffect.aiMove),
         Turn.player1,
         disableSoundEffects: true,
-        theme: Neomorphic(),
+        theme: NeomorphicWhite(color: Colors.white),
       ),
       child: MaterialApp(
         home: LoginPage(),
