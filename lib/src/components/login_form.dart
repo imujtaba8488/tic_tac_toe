@@ -12,15 +12,16 @@ class LoginForm extends StatefulWidget {
 
 class LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String username;
-  String password;
-  GameModel gameModel;
+  String _username;
+  String _password;
+  GameModel _gameModel;
+  bool loginAttempt = false;
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
-        this.gameModel = gameModel;
+        this._gameModel = gameModel;
 
         return Form(
           key: _formKey,
@@ -34,7 +35,7 @@ class LoginFormState extends State<LoginForm> {
                     border: OutlineInputBorder(),
                     suffixIcon: Icon(Icons.person),
                   ),
-                  onSaved: (value) => username = value,
+                  onSaved: (value) => _username = value,
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Username is required.';
@@ -55,7 +56,7 @@ class LoginFormState extends State<LoginForm> {
                     suffixIcon: Icon(Icons.lock),
                   ),
                   obscureText: true,
-                  onSaved: (value) => password = value,
+                  onSaved: (value) => _password = value,
                   onFieldSubmitted: (value) => _onFormSave(),
                   validator: (value) {
                     if (value.isEmpty) {
@@ -83,7 +84,8 @@ class LoginFormState extends State<LoginForm> {
                     )
                   ],
                 ),
-              )
+              ),
+              if (loginAttempt) CircularProgressIndicator(),
             ],
           ),
         );
@@ -91,27 +93,54 @@ class LoginFormState extends State<LoginForm> {
     );
   }
 
+  // Action to be taken when user tries to login either by pressing login button or hitting the submit key on the keyboard.
   void _onFormSave() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      await Cloud().userExists(username, password).then((bool exists) {
-        if (exists) {
-          gameModel.player1.name = username;
-          gameModel.refreshScores();
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return HomePage();
-              },
-            ),
-          );
-        } else {
-          print("user doens't exist. Please sign up!");
-        }
+      setState(() {
+        loginAttempt = true;
       });
+
+      await Cloud().userExists(_username, _password).then(
+        (bool exists) {
+          if (exists) {
+            _gameModel.player1.name = _username;
+            _gameModel.refreshScores();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return HomePage();
+                },
+              ),
+            );
+
+            setState(() {
+              loginAttempt = false;
+            });
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('No such user exists. Please Sign up!'),
+                  actions: <Widget>[
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        loginAttempt = false;
+                      },
+                      child: Text('OK'),
+                    )
+                  ],
+                );
+              },
+            );
+          }
+        },
+      );
     }
   }
 }
