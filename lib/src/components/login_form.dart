@@ -125,7 +125,8 @@ class LoginFormState extends State<LoginForm> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: Text('No such user exists. Please Sign up!'),
+                  title: Text('Error: No such user exists.'),
+                  content: Text('Please sign Up!'),
                   actions: <Widget>[
                     RaisedButton(
                       onPressed: () {
