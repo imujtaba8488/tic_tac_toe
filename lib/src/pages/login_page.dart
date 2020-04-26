@@ -4,18 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/game_model.dart';
 import '../components/login_form.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return LoginPageState();
-  }
-}
-
-class LoginPageState extends State<LoginPage> {
-  GlobalKey<FormState> _formKey = GlobalKey();
-  String username = '';
-  String password = '';
-
+class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
@@ -53,7 +42,10 @@ class LoginPageState extends State<LoginPage> {
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
-                  LoginForm(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: LoginForm(),
+                  ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height / 20,
                   ),
