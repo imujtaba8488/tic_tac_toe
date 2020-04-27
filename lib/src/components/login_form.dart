@@ -108,7 +108,7 @@ class LoginFormState extends State<LoginForm> {
             _gameModel.player1.name = _username;
             _gameModel.refreshScores();
 
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) {

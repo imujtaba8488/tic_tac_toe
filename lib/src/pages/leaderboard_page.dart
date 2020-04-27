@@ -54,7 +54,7 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   Widget itemBuilder(BuildContext context, int index) {
     return ListTile(
       title: Text(
-        "${ss.data.documents[index]['username']}'",
+        "${ss.data.documents[index]['username']}",
         style: TextStyle(
 
           fontSize: 20,
