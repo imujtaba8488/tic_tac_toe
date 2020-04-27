@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/game_model.dart';
 import '../components/login_form.dart';
+import 'sign_up_page.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -18,7 +19,12 @@ class LoginPage extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: FlatButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpPage(),
+                        ),
+                      ),
                       child: Text(
                         'sign up',
                         style: TextStyle(
