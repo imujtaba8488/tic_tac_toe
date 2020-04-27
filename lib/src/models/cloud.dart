@@ -8,6 +8,7 @@ class Cloud {
     int totalWins = 0; // total number of wins.
     int totalLost = 0; // total number of losses.
 
+    String email; // temp: email
     String uname; // temp: username.
     String pwd; // temp: password.
     int wins; // temp: previous wins.
@@ -16,6 +17,7 @@ class Cloud {
     // Get previous stats / info.
     await firestore.collection('score').getDocuments().then((snapshot) {
       snapshot.documents.forEach((document) {
+        email = document.data['email'];
         uname = document.data['username'];
         pwd = document.data['password'];
         wins = document.data['wins'];
@@ -33,6 +35,7 @@ class Cloud {
 
     // Update on firestore.
     firestore.collection('score').document(username).setData({
+      'email': email,
       'username': username,
       'password': pwd,
       'wins': totalWins,
@@ -60,8 +63,9 @@ class Cloud {
   }
 
   /// Adds the user with the given [username] to the cloud. Note: as of now duplicate usernames are not checked for //! Review:
-  void addUser(String username, String password) async {
+  void addUser(String email, String username, String password) async {
     await firestore.collection('score').document(username).setData({
+      'email': email,
       'username': username,
       'password': password,
       'wins': 0,
@@ -78,12 +82,14 @@ class Cloud {
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((document) {
+        String email = document.data['email'];
         String username = document.data['username'];
         String password = document.data['password'];
         int wins = document.data['wins'];
         int lost = document.data['lost'];
 
         data.add({
+          'email': email,
           'username': username,
           'password': password,
           'wins': wins,
@@ -109,4 +115,6 @@ class Cloud {
 
     return Future.value(user);
   }
+
+  // todo: Check whether email exists or not!!!
 }

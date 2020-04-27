@@ -158,7 +158,7 @@ class SignUpFormState extends State<SignUpForm> {
           submitted = true;
         });
 
-        Cloud().addUser(username, password);
+        Cloud().addUser(email, username, password);
 
         Navigator.push(
           context,
