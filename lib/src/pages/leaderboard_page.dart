@@ -16,12 +16,8 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
-
         return Scaffold(
-
-          appBar: AppBar(
-
-          ),
+          appBar: AppBar(),
           body: ScopedModelDescendant<GameModel>(
             builder: (context, child, gameModel) {
               return StreamBuilder(
@@ -56,7 +52,6 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
       title: Text(
         "${ss.data.documents[index]['username']}",
         style: TextStyle(
-
           fontSize: 20,
         ),
       ),
@@ -67,7 +62,6 @@ class _LeaderBoardPageState extends State<LeaderBoardPage> {
             Text(
               'Wins: ${ss.data.documents[index]['wins']}',
               style: TextStyle(
-
                 fontSize: 20,
               ),
             ),
