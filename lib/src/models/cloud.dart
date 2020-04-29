@@ -101,7 +101,7 @@ class Cloud {
     return Future.value(data);
   }
 
-  /// Gets the user with the given [username].
+  /// Gets the user with the given [username], if one exists.
   Future<Map<String, dynamic>> getUser(String username) async {
     List<Map<String, dynamic>> cloudUsers = await allUsers;
 
@@ -115,6 +115,29 @@ class Cloud {
 
     return Future.value(user);
   }
+
+  /// Returns the user with the given [email], if one exists.
+  Future<Map<String, dynamic>> getUserByEmail(String email) async {
+    List<Map<String, dynamic>> cloudUsers = await allUsers;
+
+    Map<String, dynamic> user;
+
+    for (int i = 0; i < cloudUsers.length; i++) {
+      if (cloudUsers[i]['email'].contains(email)) {
+        user = cloudUsers[i];
+      }
+    }
+
+    return Future.value(user);
+  }
+
+  /// Returns 'true' if a user with the given [username] exists, else returns false.
+  Future<bool> isUsernameAvailable(String username) async =>
+      await getUser(username) != null;
+
+  /// Returns 'true' if a user with the given [email] exists, else returns 'false'
+  Future<bool> isEmailTaken(String email) async =>
+      await getUserByEmail(email) != null;
 
   // todo: Check whether email exists or not!!!
 }

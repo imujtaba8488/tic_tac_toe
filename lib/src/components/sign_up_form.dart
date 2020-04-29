@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/src/models/cloud.dart';
 import 'package:tic_tac_toe/src/pages/login_page.dart';
 
+// Todo: An email must be in a a valid format such as name.example.com. It must not begin with any of the special character including space, period, and numbers etc. It must not contain any spaces or special characters except dot/underscore. You can send a verification link to verify the email.
+
+// Todo: A username cannot begin with any special characters and numbers. It must also not contain a space or any special character including period/underscore. It must not be less than 04 characters long.
+
 class SignUpForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => SignUpFormState();
@@ -33,10 +37,14 @@ class SignUpFormState extends State<SignUpForm> {
                 if (value.isEmpty) {
                   return 'email is required';
                 } else if (!value.contains('@gmail.com')) {
-                  return 'Invalid Email. You must have a gmail account.';
-                } else {
+                  return 'Invalid Email. You must have a valid gmail account.';
+                } else if(value.contains(' ')) {
+                  return 'Invalid Email. Email cannot contain a space';
+                } else  {
                   return null;
                 }
+
+                // todo: Cannot contain an uppercase letter. Cannot begin with a special character, space, dot etc. 
               }),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -112,6 +120,7 @@ class SignUpFormState extends State<SignUpForm> {
   }
 
   void _onFormSave() async {
+    // ! You're generating a new Cloud instance everytime. Is that required?
     // ! Review: Also check for email already exists.
 
     bool usernameTaken = false;
@@ -125,9 +134,9 @@ class SignUpFormState extends State<SignUpForm> {
       });
 
       // Check if username is available.
-      var user = await Cloud().getUser(editController.value.text);
+      //// var user = await Cloud().getUser(editController.value.text);
 
-      if (user != null) {
+      if (await Cloud().isUsernameAvailable(username)) {
         usernameTaken = true;
 
         setState(() {
