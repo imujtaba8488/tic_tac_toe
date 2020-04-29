@@ -139,5 +139,5 @@ class Cloud {
   Future<bool> isEmailTaken(String email) async =>
       await getUserByEmail(email) != null;
 
-  // todo: Check whether email exists or not!!!
+  // ! Check whether email exists or not!!!
 }
