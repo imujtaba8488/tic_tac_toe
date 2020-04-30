@@ -21,7 +21,7 @@ class SignUpFormState extends State<SignUpForm> {
   /// 'True' if the form was submitted and 'false' otherwise.
   bool _isSubmitted = false;
 
-  TextEditingController editController = TextEditingController(); 
+  TextEditingController editController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +32,22 @@ class SignUpFormState extends State<SignUpForm> {
           _customizedFormField(
             label: 'Gmail',
             suffixIcon: Icon(Icons.email),
-            onSave: (String value) => email = value,
+            onSaved: (String value) => email = value,
             validator: _validateEmail,
           ),
           _customizedFormField(
             label: 'Username',
             suffixIcon: Icon(Icons.person),
-            onSave: (String value) => username = username,
+            onSaved: (String value) => username = value,
             validator: _validateUsername,
           ),
           _customizedFormField(
-              label: 'Password',
-              suffixIcon: Icon(Icons.lock),
-              obscureText: true,
-              onSave: (String value) => password = value,
-              validator: (String value) {}),
+            label: 'Password',
+            suffixIcon: Icon(Icons.lock),
+            obscureText: true,
+            onSaved: (String value) => password = value,
+            validator: _validatePassword,
+          ),
           Align(
             alignment: Alignment.centerRight,
             child: RaisedButton(
@@ -56,30 +57,42 @@ class SignUpFormState extends State<SignUpForm> {
           ),
 
           // When the form is submitted, display a progress bar.
-          if (_isSubmitted) CircularProgressIndicator(),
+          if (_isSubmitted)
+            CircularProgressIndicator(),
         ],
       ),
     );
   }
 
-  /// Returns 'null' if [email] is valid, else returns the corresponding error message.
-  String _validateEmail(String email) {
-    if (email.isEmpty) {
+  /// Returns 'null' if [value] is valid, else returns the corresponding error message.
+  String _validateEmail(String value) {
+    if (value.isEmpty) {
       return 'email is required';
-    } else if (!email.contains('@gmail.com')) {
+    } else if (!value.contains('@gmail.com')) {
       return 'Invalid Email. You must have a valid gmail account.';
-    } else if (email.contains(' ')) {
+    } else if (value.contains(' ')) {
       return 'Invalid Email. Email cannot contain a space';
     } else {
       return null;
     }
   }
 
-  /// Returns 'null' if [username] is valid, else returns the corresponding error message.
-  String _validateUsername(String username) {
-    if (username.isEmpty) {
+  /// Returns 'null' if [value] is valid, else returns the corresponding error message.
+  String _validateUsername(String value) {
+    if (value.isEmpty) {
+      return 'Username is required.';
+    } else if (value.length < 4) {
+      return 'Username cannot be less than 4 characters.';
+    } else {
+      return null;
+    }
+  }
+
+  /// Returns 'null' if [value] is valid, else returns the corresponding error message.
+  String _validatePassword(String value) {
+    if (value.isEmpty) {
       return 'Password is required.';
-    } else if (username.length < 6) {
+    } else if (value.length < 6) {
       return 'Password cannot be less than 6 characters.';
     } else {
       return null;
@@ -90,7 +103,7 @@ class SignUpFormState extends State<SignUpForm> {
   Widget _customizedFormField({
     String label,
     Function validator,
-    Function onSave,
+    Function onSaved,
     bool obscureText = false,
     Icon suffixIcon,
   }) {
@@ -104,7 +117,7 @@ class SignUpFormState extends State<SignUpForm> {
         ),
         validator: validator,
         obscureText: obscureText,
-        onSaved: onSave,
+        onSaved: onSaved,
         // onChanged: (value) {
         //   _formKey.currentState.validate();
         // },
@@ -117,8 +130,6 @@ class SignUpFormState extends State<SignUpForm> {
     // ! You're generating a new Cloud instance everytime. Is that required?
     // ! Review: Also check for email already exists.
 
-    bool usernameTaken = false;
-
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
@@ -127,49 +138,43 @@ class SignUpFormState extends State<SignUpForm> {
         _isSubmitted = true;
       });
 
-      // Check if username is available.
-      //// var user = await Cloud().getUser(editController.value.text);
+      if (await Cloud().isEmailTaken(email)) {
+        if (await Cloud().isUsernameAvailable(username)) {
+          bool success = await Cloud().addUser(email, username, password);
 
-      if (await Cloud().isUsernameAvailable(username)) {
-        usernameTaken = true;
-
-        setState(() {
-          _isSubmitted = false;
-        });
-
-        showDialog(
-          context: context,
-          child: AlertDialog(
-            title: Text(
-              'username "${editController.value.text}" is already taken.',
-            ),
-            content: Text('Please choose a different username!'),
-            actions: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              )
-            ],
-          ),
-        );
-      }
-
-      if (!usernameTaken) {
-        setState(() {
-          _isSubmitted = true;
-        });
-
-        Cloud().addUser(email, username, password);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-        );
+          success
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                )
+              : print('Error: @SignUpForm @onFormSave, user not saved.');
+        } else {
+          _showAlert(
+            'Username "$username" is not available. Choose a different one.',
+          );
+        }
+      } else {
+        _showAlert('Email "$email" is already taken. Specify a different one.');
       }
     }
+  }
+
+  void _showAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            RaisedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            )
+          ],
+        );
+      },
+    );
   }
 }

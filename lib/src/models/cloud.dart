@@ -65,10 +65,13 @@ class Cloud {
     // return Future.value(result);
   }
 
-  /// Adds the user with the given [username] to the cloud. // ! Review: as of now duplicate usernames are not checked for.
-  void addUser(String email, String username, String password) async {
+  /// Returns 'true' if a user with the given credentials is added successfully, else returns 'false'.
+  Future<bool> addUser(String email, String username, String password) async {
     // Only add user if it doesn't already exist in the cloud.
-    if (!await userExists(username, password)) {
+    if (!await userExists(username, password) &&
+        email != null &&
+        username != null &&
+        password != null) {
       await firestore.collection('score').document(username).setData({
         'email': email,
         'username': username,
@@ -76,10 +79,14 @@ class Cloud {
         'wins': 0,
         'lost': 0,
       });
+
+      return true;
     } else {
       print(
-        '@Cloud @addUser(): User with the given credentials already exists',
+        '@Cloud @addUser(): Error: While signing up. Ensure username / email does not already exist, email / username / password is not null or empty.',
       );
+
+      return false;
     }
   }
 
