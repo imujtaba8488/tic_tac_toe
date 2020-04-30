@@ -248,7 +248,7 @@ class GameModel extends Model {
     // If reset is called within this class, the the following statement is not
     // required. However, if called from outside of this class, the following
     // statement is necessary. At least, that is what I have understood so far.
-    // ! Maybe look into this later. Review...
+    // ? Maybe look into this later. Review...
     if (_turn == Turn.player2) _playAiTurn();
 
     // Stop any SoundEffect from playing. This does not disable SoundEffects,
