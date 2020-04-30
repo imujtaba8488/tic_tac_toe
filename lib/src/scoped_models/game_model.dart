@@ -6,6 +6,7 @@ import '../models/cloud.dart';
 import '../models/player.dart';
 import '../models/score.dart';
 import '../models/sound_effect_player.dart';
+import '../models/game.dart';
 
 part 'win_lose_logic.dart';
 part 'constants.dart';
@@ -45,6 +46,8 @@ class GameModel extends Model {
   /// occur, etc.
   StatusChange statusChange;
 
+  Game _currentGame;
+
   GameModel(
     this.player1,
     this.player2,
@@ -54,7 +57,7 @@ class GameModel extends Model {
     this.aiThinkingDelay = const Duration(milliseconds: 500),
     this.enableLogs = false,
   }) {
-    _initMovesToDefaultState();
+    _currentGame = Game();
 
     _soundEffectPlayer = SoundEffectPlayer();
 
@@ -62,9 +65,6 @@ class GameModel extends Model {
 
     if (enableLogs) _gameStartUpLogs();
   }
-
-  /// Initializes the moves to their default state.
-  void _initMovesToDefaultState() => _moves = List.filled(9, '');
 
   /// Plays the move at the given index [at].
   void playMove(int at) {
@@ -85,7 +85,7 @@ class GameModel extends Model {
   /// Plays the [player] turn at the given position [at].
   void _playTurn(int at, Player player) {
     _moves[at] = player.mark;
-    player.addMove(at);
+    _currentGame.addPlayer1Move(at);
 
     // Play move sound if not disabled.
     if (!disableSoundEffects) _soundEffectPlayer.play(player.moveSoundEffect);
@@ -162,19 +162,6 @@ class GameModel extends Model {
     _turn == Turn.player1 ? _turn = Turn.player2 : _turn = Turn.player1;
   }
 
-  /// Returns a list of indexes of moves that are yet to be played.
-  List<int> get movesRemaining {
-    List<int> remaining = [];
-
-    for (int i = 0; i < _moves.length; i++) {
-      if (_moves[i].isEmpty) {
-        remaining.add(i);
-      }
-    }
-
-    return remaining;
-  }
-
   /// A very essential method, which describes and controls many factors that
   /// need updated or notified, when there is a change in game status.
   void _gameStatusChange() async {
@@ -232,10 +219,9 @@ class GameModel extends Model {
 
   /// Resets the game.
   void reset() {
-    _initMovesToDefaultState();
-
-    player1.resetMoves();
-    player2.resetMoves();
+    _currentGame.resetTotalMoves();
+    _currentGame.resetPlayer1Moves();
+    _currentGame.resetPlayer2Moves();
 
     _gameStatus = _GameStatus.moves_available;
     _moveStatus = _MoveStatus.next_move_available;
