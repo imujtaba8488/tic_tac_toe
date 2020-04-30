@@ -184,7 +184,7 @@ class GameModel extends Model {
       statusChange = StatusChange.draw;
       notifyListeners();
     } else if (_playStatus == _PlayStatus.player1_won) {
-      player1.registerAWin();
+      player1.updateCurrentWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.win);
       statusChange = StatusChange.player1_won;
 
@@ -195,7 +195,7 @@ class GameModel extends Model {
 
       notifyListeners();
     } else if (_playStatus == _PlayStatus.player2_won) {
-      player2.registerAWin();
+      player2.updateCurrentWin();
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.lost);
       statusChange = StatusChange.player2_won;
 

@@ -48,12 +48,12 @@ class Player {
   }
 
   /// Updates score by a win.
-  void registerAWin() {
+  void updateCurrentWin() {
     _currentScore.wins++;
   }
 
   /// Updates score by a loss.
-  void registerALoss() {
+  void updateCurrentLoss() {
     _currentScore.loss++;
   }
 
