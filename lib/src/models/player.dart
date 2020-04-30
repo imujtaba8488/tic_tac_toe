@@ -2,17 +2,14 @@ import 'score.dart';
 import 'sound_effect_player.dart';
 
 class Player {
-  /// Name of the player.
   String name;
-
   String username;
-
   String password;
 
   /// The mark assigned to the player.
   String mark;
 
-  /// The total number of moves played by this player.
+  /// Tracks number of moves played by this player for the current game.
   List<int> _currentMovesPlayed;
 
   /// The current game score of the player.

@@ -4,15 +4,16 @@ class Cloud {
   final Firestore firestore = Firestore.instance;
 
   /// Updates a win or loss for the given username in the cloud.
-  Future<void> sync(String username, bool win) async {
+  Future<void> sync(String username, bool isAWin) async {
     int totalWins = 0; // total number of wins.
     int totalLost = 0; // total number of losses.
 
-    String email; // temp: email
-    String uname; // temp: username.
-    String pwd; // temp: password.
-    int wins; // temp: previous wins.
-    int lost; // temp: previous lost.
+    // Temp place holders.
+    String email;
+    String uname;
+    String pwd;
+    int wins;
+    int lost;
 
     // Get previous stats / info.
     await firestore.collection('score').getDocuments().then((snapshot) {
@@ -31,7 +32,7 @@ class Cloud {
     });
 
     // If win update wins else update lost.
-    win ? totalWins++ : totalLost++;
+    isAWin ? totalWins++ : totalLost++;
 
     // Update on firestore.
     firestore.collection('score').document(username).setData({
@@ -48,7 +49,7 @@ class Cloud {
     // ? how to delete an entire collection?
   }
 
-  /// Returns true if a user with the given [username] exists in the cloud.
+  /// Returns true if a user with the given [username] and [password] exists in the cloud.
   Future<bool> userExists(String username, String password) async {
     bool result = false;
 
@@ -59,18 +60,27 @@ class Cloud {
       }
     });
 
-    return Future.value(result);
+    // ? Should i use just first one or the commented one. What's the diff?
+    return result;
+    // return Future.value(result);
   }
 
-  /// Adds the user with the given [username] to the cloud. Note: as of now duplicate usernames are not checked for //! Review:
+  /// Adds the user with the given [username] to the cloud. // ! Review: as of now duplicate usernames are not checked for.
   void addUser(String email, String username, String password) async {
-    await firestore.collection('score').document(username).setData({
-      'email': email,
-      'username': username,
-      'password': password,
-      'wins': 0,
-      'lost': 0,
-    });
+    // Only add user if it doesn't already exist in the cloud.
+    if (!await userExists(username, password)) {
+      await firestore.collection('score').document(username).setData({
+        'email': email,
+        'username': username,
+        'password': password,
+        'wins': 0,
+        'lost': 0,
+      });
+    } else {
+      print(
+        '@Cloud @addUser(): User with the given credentials already exists',
+      );
+    }
   }
 
   /// Gets a list of all the users in the cloud.
@@ -138,6 +148,4 @@ class Cloud {
   /// Returns 'true' if a user with the given [email] exists, else returns 'false'
   Future<bool> isEmailTaken(String email) async =>
       await getUserByEmail(email) != null;
-
-  // ! Check whether email exists or not!!!
 }
