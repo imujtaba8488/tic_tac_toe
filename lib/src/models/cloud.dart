@@ -150,9 +150,9 @@ class Cloud {
 
   /// Returns 'true' if a user with the given [username] exists, else returns false.
   Future<bool> isUsernameAvailable(String username) async =>
-      await getUser(username) != null;
+      await getUser(username) == null;
 
   /// Returns 'true' if a user with the given [email] exists, else returns 'false'
-  Future<bool> isEmailTaken(String email) async =>
-      await getUserByEmail(email) != null;
+  Future<bool> isEmailAvailable(String email) async =>
+      await getUserByEmail(email) == null;
 }

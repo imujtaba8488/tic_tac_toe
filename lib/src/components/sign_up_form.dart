@@ -138,7 +138,7 @@ class SignUpFormState extends State<SignUpForm> {
         _isSubmitted = true;
       });
 
-      if (await Cloud().isEmailTaken(email)) {
+      if (await Cloud().isEmailAvailable(email)) {
         if (await Cloud().isUsernameAvailable(username)) {
           bool success = await Cloud().addUser(email, username, password);
 

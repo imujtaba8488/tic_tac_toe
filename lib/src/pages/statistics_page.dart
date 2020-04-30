@@ -8,6 +8,7 @@ class StatisticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GameModel>(
       builder: (context, child, gameModel) {
+
         return Scaffold(
           appBar: AppBar(),
           body: SingleChildScrollView(
@@ -40,7 +41,7 @@ class StatisticsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Text(
-                    'Rank: ??',
+                    'Rank: ${gameModel.player1.rank}',
                     style: TextStyle(
                       fontSize: 25,
                     ),
@@ -191,7 +192,7 @@ class StatisticsPage extends StatelessWidget {
     );
   }
 
-  /// Returns a TableRow for extra stats. // ! Review later... 
+  /// Returns a TableRow for extra stats. // ! Review later...
   TableRow _extraStatRow({
     Icon icon,
     String label,

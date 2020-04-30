@@ -106,7 +106,11 @@ class LoginFormState extends State<LoginForm> {
         (bool exists) {
           if (exists) {
             _gameModel.player1.name = _username;
+
+
+            _gameModel.player1.username = _username;
             _gameModel.refreshScores();
+            _gameModel.updatePlayerRank();
 
             Navigator.pushReplacement(
               context,

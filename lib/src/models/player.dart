@@ -3,6 +3,7 @@ import 'sound_effect_player.dart';
 
 class Player {
   String name;
+  String email;
   String username;
   String password;
 

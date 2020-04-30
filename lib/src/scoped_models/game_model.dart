@@ -191,6 +191,7 @@ class GameModel extends Model {
       // 'True' indicates that a win needs to be registered on cloud. Await is important here because _updateLifeTimeScore() and notifyListeners() should only run when this is complete.
       await Cloud().sync(player1.name, true);
       _syncScoreWithCloud(player1);
+      updatePlayerRank();
 
       notifyListeners();
     } else if (_playStatus == _PlayStatus.player2_won) {
@@ -201,6 +202,7 @@ class GameModel extends Model {
       // 'False' indicates that a loss needs to be registered on cloud. Await is important here because _updateLifeTimeScore() and notifyListeners() should only run when this is complete.
       await Cloud().sync(player1.name, false);
       _syncScoreWithCloud(player1);
+      updatePlayerRank();
 
       notifyListeners();
     } else if (_moveStatus == _MoveStatus.next_move_unavailable) {
@@ -273,6 +275,55 @@ class GameModel extends Model {
     if (player.name.isNotEmpty) {
       player.lifeTimeScore.wins = p['wins'];
       player.lifeTimeScore.loss = p['lost'];
+    }
+  }
+
+  Future<Player> getPlayer(String username) async {
+    Map<String, dynamic> user = await Cloud().getUser(username);
+
+    Player player = Player();
+
+    player.email = user['email'];
+    player.username = user['username'];
+    player.password = user['password'];
+    player.lifeTimeScore = Score(wins: user['wins'], loss: user['lost']);
+
+    return player;
+  }
+
+  Future<List<Player>> get allPlayers async {
+    List<Map<String, dynamic>> users = await Cloud().allUsers;
+
+    List<Player> allPlayers = [];
+
+    users.forEach((user) {
+      Player player = Player();
+      player.email = user['email'];
+      player.username = user['username'];
+      player.password = user['password'];
+      player.lifeTimeScore = Score(wins: user['wins'], loss: user['lost']);
+      allPlayers.add(player);
+    });
+
+    return allPlayers;
+  }
+
+  void updatePlayerRank() async {
+    print('inside update player rank.....');
+
+    List<Player> all = await allPlayers;
+
+    all.sort((Player p1, Player p2) {
+      return p1.lifeTimeScore.wins.compareTo(p2.lifeTimeScore.wins);
+    });
+
+    for (int index = 0; index < all.length; index++) {
+      all[index].rank = all.length - index;
+
+      if (all[index].username == player1.username) {
+        player1.rank = all[index].rank;
+        print('rank: ${player1.rank}');
+      }
     }
   }
 

@@ -66,6 +66,9 @@ class _BoardState extends State<Board> with SingleTickerProviderStateMixin {
                   child: Center(
                     child: Text(
                       gameModel.moves[index],
+                      style: TextStyle(
+                        fontSize: 50,
+                      )
                     ),
                   ),
                 ),
