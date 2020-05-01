@@ -1,7 +1,11 @@
+import 'sound_effect_player.dart';
+
 class Game {
   final List<String> _totalMoves;
   final List<int> _player1Moves;
   final List<int> _player2Moves;
+  final SoundEffect player1SoundEffect = SoundEffect.userMove;
+  final SoundEffect player2SoundEffect = SoundEffect.aiMove;
 
   Game()
       : _totalMoves = List.filled(9, ''),

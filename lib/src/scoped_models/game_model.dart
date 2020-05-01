@@ -74,23 +74,30 @@ class GameModel extends Model {
     if (_gameStatus == _GameStatus.moves_available) {
       if (_playStatus == _PlayStatus.active) {
         if (_moveStatus == _MoveStatus.next_move_available) {
-          _turn == Turn.player1
-              ? _playTurn(at, player1)
-              : _playTurn(at, player2);
+          _turn == Turn.player1 ? _playTurn(at) : _playTurn(at);
         }
       }
     }
   }
 
   /// Plays the [player] turn at the given position [at].
-  void _playTurn(int at, Player player) {
-    _moves[at] = player.mark;
-    _currentGame.addPlayer1Move(at);
+  void _playTurn(int at) {
+    if (_turn == Turn.player1) {
+      _moves[at] = player1.mark;
+      _currentGame.addPlayer1Move(at);
+      if (!disableSoundEffects)
+        _soundEffectPlayer.play(
+          _currentGame.player1SoundEffect,
+        );
+    } else {
+      _moves[at] = player2.mark;
+      _currentGame.addPlayer2Move(at);
+      if (!disableSoundEffects)
+        _soundEffectPlayer.play(
+          _currentGame.player2SoundEffect,
+        );
+    }
 
-    // Play move sound if not disabled.
-    if (!disableSoundEffects) _soundEffectPlayer.play(player.moveSoundEffect);
-
-    _switchTurn();
     _checkPlayStatus();
 
     // Check for draw only if the last move doesn't result in a win.
@@ -101,8 +108,8 @@ class GameModel extends Model {
     notifyListeners();
 
     // Play AI's turn, if playing aganist the AI. Observe the three 'if' checks.
-    if (againstAI) if (_turn == Turn.player2) if (movesRemaining.length > 0)
-      _playAiTurn();
+    if (againstAI) if (_turn ==
+        Turn.player2) if (_currentGame.movesRemaining.length > 0) _playAiTurn();
 
     // Observe: How does the AI know that it has to play first, in case the user
     // wins or user causes the draw? Since, in both the cases, it is the user
@@ -213,8 +220,12 @@ class GameModel extends Model {
 
   /// Plays a random move from the [movesRemaining] i.e. the remaining moves.
   void _playRandomMove() {
-    movesRemaining.shuffle();
-    playMove(movesRemaining[Random().nextInt(movesRemaining.length)]);
+    _currentGame.movesRemaining.shuffle();
+    playMove(
+      _currentGame.movesRemaining[Random().nextInt(
+        _currentGame.movesRemaining.length,
+      )],
+    );
   }
 
   /// Resets the game.
