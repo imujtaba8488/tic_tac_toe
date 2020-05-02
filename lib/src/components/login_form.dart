@@ -72,16 +72,14 @@ class LoginFormState extends State<LoginForm> {
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    FlatButton(
-                      onPressed: () {},
-                      child: Text('forgot password?'),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 24,
+                      child: RaisedButton(
+                        onPressed: (){},
+                        child: Text('Login'),
+                      ),
                     ),
-                    RaisedButton(
-                      onPressed: () => _onFormSave(),
-                      child: Text('login'),
-                    )
                   ],
                 ),
               ),

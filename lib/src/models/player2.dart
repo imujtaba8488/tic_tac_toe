@@ -11,6 +11,8 @@ class Player2 {
   int rank;
   SoundEffect moveSoundEffect;
 
+  final Score _currentScore = Score();
+
   Player2({
     this.email = '',
     this.username = '',
@@ -23,4 +25,12 @@ class Player2 {
   }) {
     assert(lifeTimeScore != null, 'lifeTimeScore cannot be null');
   }
+
+  void updateCurrentWin() => _currentScore.wins++;
+
+  void updateCurrentLoss() => _currentScore.loss++;
+
+  int get currentWins => _currentScore.wins;
+
+  int get currentLost => _currentScore.loss;
 }

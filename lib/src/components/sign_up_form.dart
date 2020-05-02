@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/src/models/cloud.dart';
-import 'package:tic_tac_toe/src/pages/login_page.dart';
+import 'package:tic_tac_toe/src/pages/landing_page.dart';
 
 // Todo: An email must be in a a valid format such as name.example.com. It must not begin with any of the special character including space, period, and numbers etc. It must not contain any spaces or special characters except dot/underscore. You can send a verification link to verify the email.
 
