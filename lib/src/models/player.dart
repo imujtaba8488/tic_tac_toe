@@ -2,11 +2,8 @@ import 'score.dart';
 import 'sound_effect_player.dart';
 
 class Player {
-  /// Name of the player.
   String name;
-
   String username;
-
   String password;
 
   /// The mark assigned to the player.
