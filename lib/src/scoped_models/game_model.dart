@@ -64,7 +64,7 @@ class GameModel extends Model {
         } else {
           if (_playStatus == _PlayStatus.player1_won) {
             statusChange = StatusChange.player1_won;
-          }else if (_playStatus == _PlayStatus.player2_won) {
+          } else if (_playStatus == _PlayStatus.player2_won) {
             statusChange = StatusChange.player2_won;
           }
         }
@@ -167,7 +167,7 @@ class GameModel extends Model {
 
       // Registers a loss on cloud for player 1.
       Cloud().sync(player1.username, false);
-      
+
       updatePlayerRank();
       notifyListeners();
     } else if (statusChange == StatusChange.error_next_move_unavailable) {
@@ -223,11 +223,6 @@ class GameModel extends Model {
     notifyListeners();
   }
 
-  void _gameStartUpLogs() {
-    print('Sound Effects: ${disableSoundEffects ? 'off' : 'on'}');
-    print('AI Play: ${againstAI ? 'on' : 'off'}');
-  }
-
   /// Refreshes and updates local data with cloud data.
   void refreshScores() => _syncScoreWithCloud(player1);
 
@@ -274,8 +269,6 @@ class GameModel extends Model {
   }
 
   void updatePlayerRank() async {
-    print('inside update player rank.....');
-
     List<Player> all = await allPlayers;
 
     all.sort((Player p1, Player p2) {
@@ -287,7 +280,6 @@ class GameModel extends Model {
 
       if (all[index].username == player1.username) {
         player1.rank = all[index].rank;
-        print('rank: ${player1.rank}');
       }
     }
   }
