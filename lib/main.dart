@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:tic_tac_toe/src/models/sound_effect_player.dart';
+import 'package:tic_tac_toe/src/pages/home_page.dart';
 
 import './src/models/player.dart';
 import './src/pages/login_page.dart';
@@ -19,7 +20,7 @@ class TicTacToe extends StatelessWidget {
         disableSoundEffects: true,
       ),
       child: MaterialApp(
-        home: LoginPage(),
+        home: HomePage(),
       ),
     );
   }

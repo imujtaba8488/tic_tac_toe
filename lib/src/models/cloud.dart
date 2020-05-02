@@ -34,6 +34,7 @@ class Cloud {
     // If win update wins else update lost.
     isAWin ? totalWins++ : totalLost++;
 
+
     // Update on firestore.
     firestore.collection('score').document(username).setData({
       'email': email,
@@ -60,7 +61,7 @@ class Cloud {
       }
     });
 
-    // ? Should i use just first one or the commented one. What's the diff?
+    // ? Should I use just first one or the commented one. What's the diff?
     return result;
     // return Future.value(result);
   }

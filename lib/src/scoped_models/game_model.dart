@@ -12,10 +12,6 @@ part 'win_lose_logic.dart';
 part 'constants.dart';
 
 class GameModel extends Model {
-  /// Total number of moves available within the game.
-  List<String> _moves;
-  _GameStatus _gameStatus = _GameStatus.moves_available;
-  _MoveStatus _moveStatus = _MoveStatus.next_move_available;
   _PlayStatus _playStatus = _PlayStatus.active;
 
   Player player1, player2;
@@ -38,9 +34,6 @@ class GameModel extends Model {
   /// The time that the AI should take to play it's turn.
   Duration aiThinkingDelay;
 
-  /// Whether to show or hide the logs.
-  bool enableLogs;
-
   /// Returns the current status of the game. For example, during the course of
   /// time, either of players may won, game may result in a draw, an error might
   /// occur, etc.
@@ -55,67 +48,70 @@ class GameModel extends Model {
     this.againstAI = true,
     this.disableSoundEffects = false,
     this.aiThinkingDelay = const Duration(milliseconds: 500),
-    this.enableLogs = false,
   }) {
     _currentGame = Game();
-
     _soundEffectPlayer = SoundEffectPlayer();
-
     statusChange = StatusChange.none;
-
-    if (enableLogs) _gameStartUpLogs();
   }
 
   /// Plays the move at the given index [at].
   void playMove(int at) {
-    _checkGameStatus();
-    _checkMoveStatus(at);
-
-    if (_gameStatus == _GameStatus.moves_available) {
-      if (_playStatus == _PlayStatus.active) {
-        if (_moveStatus == _MoveStatus.next_move_available) {
-          _turn == Turn.player1 ? _playTurn(at) : _playTurn(at);
+    if (_currentGame.isMoveAvailable(at)) {
+      if (_currentGame.anyMoveLeft) {
+        _checkGameStatus();
+        if (_playStatus == _PlayStatus.active) {
+          _playTurn(at);
+        } else {
+          if (_playStatus == _PlayStatus.player1_won) {
+            statusChange = StatusChange.player1_won;
+          }else if (_playStatus == _PlayStatus.player2_won) {
+            statusChange = StatusChange.player2_won;
+          }
         }
+      } else {
+        statusChange = StatusChange.draw;
+        _gameStatusChange();
       }
+    } else {
+      statusChange = StatusChange.error_next_move_unavailable;
+      _gameStatusChange();
     }
   }
 
   /// Plays the [player] turn at the given position [at].
   void _playTurn(int at) {
     if (_turn == Turn.player1) {
-      _moves[at] = player1.mark;
+      _currentGame.addMove(at, player1.mark);
       _currentGame.addPlayer1Move(at);
+      _switchTurn();
+
       if (!disableSoundEffects)
-        _soundEffectPlayer.play(
-          _currentGame.player1SoundEffect,
-        );
+        _soundEffectPlayer.play(_currentGame.player1SoundEffect);
     } else {
-      _moves[at] = player2.mark;
+      _currentGame.addMove(at, player2.mark);
       _currentGame.addPlayer2Move(at);
+      _switchTurn();
+
       if (!disableSoundEffects)
-        _soundEffectPlayer.play(
-          _currentGame.player2SoundEffect,
-        );
+        _soundEffectPlayer.play(_currentGame.player2SoundEffect);
     }
 
-    _checkPlayStatus();
-
-    // Check for draw only if the last move doesn't result in a win.
-    if (_playStatus != _PlayStatus.player1_won ||
-        _playStatus != _PlayStatus.player2_won) _checkGameStatus();
+    // Check to see if won / lost / draw after this game.
+    _checkGameStatus();
 
     // Necessary. Notifies the listeners that a move has been played.
     notifyListeners();
 
-    // Play AI's turn, if playing aganist the AI. Observe the three 'if' checks.
-    if (againstAI) if (_turn ==
-        Turn.player2) if (_currentGame.movesRemaining.length > 0) _playAiTurn();
-
-    // Observe: How does the AI know that it has to play first, in case the user
-    // wins or user causes the draw? Since, in both the cases, it is the user
-    // who plays (last / finishes), and after each user play, if it's AI's turn,
-    // it is played automatically. *** Also look at the reset() method for this
-    // explanation ***
+    // Check and Play AI's turn.
+    if (againstAI) {
+      if (_turn == Turn.player2) {
+        if (_currentGame.movesRemaining.length > 0) {
+          if (_playStatus == _PlayStatus.active) {
+            _playAiTurn();
+          }
+        }
+      }
+    }
   }
 
   /// Plays the AI turn.
@@ -129,38 +125,18 @@ class GameModel extends Model {
     });
   }
 
-  /// Checks if any moves are left to play or the game is over.
-  void _checkGameStatus() {
-    if (_moves.contains('')) {
-      _gameStatus = _GameStatus.moves_available;
-    } else {
-      _gameStatus = _GameStatus.draw;
-      _gameStatusChange();
-    }
-  }
-
   /// Checks if either of the players has won the game or if it is still on.
-  void _checkPlayStatus() {
-    if (_hasWon(player1.movesPlayed)) {
-      _winKey = _winningCombination(player1.movesPlayed);
+  void _checkGameStatus() {
+    if (_hasWon(_currentGame.player1Moves)) {
+      _winKey = _winningCombination(_currentGame.player1Moves);
       _playStatus = _PlayStatus.player1_won;
       _gameStatusChange();
-    } else if (_hasWon(player2.movesPlayed)) {
-      _winKey = _winningCombination(player2.movesPlayed);
+    } else if (_hasWon(_currentGame.player2Moves)) {
+      _winKey = _winningCombination(_currentGame.player2Moves);
       _playStatus = _PlayStatus.player2_won;
       _gameStatusChange();
     } else {
       _playStatus = _PlayStatus.active;
-    }
-  }
-
-  /// Checks if a move can be played at the given position [at].
-  void _checkMoveStatus(int at) {
-    if (_moves[at].isEmpty) {
-      _moveStatus = _MoveStatus.next_move_available;
-    } else {
-      _moveStatus = _MoveStatus.next_move_unavailable;
-      _gameStatusChange();
     }
   }
 
@@ -172,36 +148,30 @@ class GameModel extends Model {
   /// A very essential method, which describes and controls many factors that
   /// need updated or notified, when there is a change in game status.
   void _gameStatusChange() async {
-    if (_gameStatus == _GameStatus.draw) {
+    if (statusChange == StatusChange.draw) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.draw);
       Score.draws++;
-      statusChange = StatusChange.draw;
       notifyListeners();
-    } else if (_playStatus == _PlayStatus.player1_won) {
-      player1.updateCurrentWin();
+    } else if (statusChange == StatusChange.player1_won) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.win);
-      statusChange = StatusChange.player1_won;
+      _currentGame.player1Score.wins += 1;
 
-      // 'True' indicates that a win needs to be registered on cloud. Await is important here because _updateLifeTimeScore() and notifyListeners() should only run when this is complete.
-      await Cloud().sync(player1.name, true);
-      _syncScoreWithCloud(player1);
+      // Registers a win on cloud for player 1.
+      Cloud().sync(player1.username, true);
+
       updatePlayerRank();
-
       notifyListeners();
-    } else if (_playStatus == _PlayStatus.player2_won) {
-      player2.updateCurrentWin();
+    } else if (statusChange == StatusChange.player2_won) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.lost);
-      statusChange = StatusChange.player2_won;
+      _currentGame.player2Score.wins += 1;
 
-      // 'False' indicates that a loss needs to be registered on cloud. Await is important here because _updateLifeTimeScore() and notifyListeners() should only run when this is complete.
-      await Cloud().sync(player1.name, false);
-      _syncScoreWithCloud(player1);
+      // Registers a loss on cloud for player 1.
+      Cloud().sync(player1.username, false);
+      
       updatePlayerRank();
-
       notifyListeners();
-    } else if (_moveStatus == _MoveStatus.next_move_unavailable) {
+    } else if (statusChange == StatusChange.error_next_move_unavailable) {
       if (!disableSoundEffects) _soundEffectPlayer.play(SoundEffect.error);
-      statusChange = StatusChange.error_next_move_unavailable;
       notifyListeners();
     }
   }
@@ -209,10 +179,11 @@ class GameModel extends Model {
   /// Plays the AI move. AI moves are subjected to many decisions, so that the
   /// AI plays intelligently. Later difficulty level can be set for the AI play.
   void _aiPlay() {
-    if (_isWinPossible(player2.movesPlayed, _moves) >= 0) {
-      playMove(_isWinPossible(player2.movesPlayed, _moves));
-    } else if (_isWinPossible(player1.movesPlayed, _moves) >= 0) {
-      playMove(_isWinPossible(player1.movesPlayed, _moves));
+    if (_isWinPossible(_currentGame.player2Moves, _currentGame.moves) >= 0) {
+      playMove(_isWinPossible(_currentGame.player2Moves, _currentGame.moves));
+    } else if (_isWinPossible(_currentGame.player1Moves, _currentGame.moves) >=
+        0) {
+      playMove(_isWinPossible(_currentGame.player1Moves, _currentGame.moves));
     } else {
       _playRandomMove();
     }
@@ -222,9 +193,8 @@ class GameModel extends Model {
   void _playRandomMove() {
     _currentGame.movesRemaining.shuffle();
     playMove(
-      _currentGame.movesRemaining[Random().nextInt(
-        _currentGame.movesRemaining.length,
-      )],
+      _currentGame
+          .movesRemaining[Random().nextInt(_currentGame.movesRemaining.length)],
     );
   }
 
@@ -234,8 +204,6 @@ class GameModel extends Model {
     _currentGame.resetPlayer1Moves();
     _currentGame.resetPlayer2Moves();
 
-    _gameStatus = _GameStatus.moves_available;
-    _moveStatus = _MoveStatus.next_move_available;
     _playStatus = _PlayStatus.active;
 
     statusChange = StatusChange.none;
@@ -327,7 +295,7 @@ class GameModel extends Model {
   // ****************** Getters and Setters  ****************** //
 
   /// Returns a read-only copy of moves.
-  List<String> get moves => List.unmodifiable(_moves);
+  List<String> get moves => _currentGame.moves;
 
   /// Returns true or false, depending upon whether the AI is thinking or not.
   bool get isAiThinking => _isAiThinking;
